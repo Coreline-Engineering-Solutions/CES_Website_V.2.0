@@ -20,8 +20,10 @@ import AI4 from './AI-4.jpg'
 import AI5 from './AI-5.jpg'
 import AI6 from './AI-6.jpg'
 import herobg from './herobg.png'
+import Loginbg from './LoginBackground.png'
 
 export {
+    Loginbg,
     AI1,
     AI2,
     AI3,
