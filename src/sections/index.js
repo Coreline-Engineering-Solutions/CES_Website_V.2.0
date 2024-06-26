@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import Hero from "./Hero";
 import Expierence from "./Expierence";
 import MapTutorial from "./MapTutorial";
+import Login from "./Login";
 
 export {
 
@@ -21,5 +22,6 @@ export {
   Hero,
   Expierence,
   MapTutorial,
+  Login,
 
 };

@@ -35,6 +35,11 @@ const Navbar = () => {
 					>
 						<a href='./src/sections/login.php'>Login</a>
 					</li>
+					<li
+						className={`p-6 hover:bg-[#00309e] text-white text-[18px] rounded-full mx-2 m-2 cursor-pointer duration-300 hover:text-white font-bold text-center `}
+					>
+						<Link to='/Login'>Login 2</Link>
+					</li>
 				</ul>
 				<div className=' hidden justify-end items-center max-lg:block '>
 					{/* Mobile Navigation Items */}
