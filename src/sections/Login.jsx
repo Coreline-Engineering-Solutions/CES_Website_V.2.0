@@ -36,7 +36,7 @@ const Login = () => {
             };
 
             // Send a POST request to the server with form data using Axios
-            const response = await axios.post('http://localhost/gisV2/CES_Website_V.2.0/src/php/login.php', submissionData, {
+            const response = await axios.post('http://www.corelineengineering.com/php/login.php', submissionData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
