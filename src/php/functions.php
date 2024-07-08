@@ -1,4 +1,5 @@
 <?php
+    
     //short hand redirect
     function redirect($loc) {
         header("Location: {$loc}");

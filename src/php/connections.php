@@ -1,15 +1,19 @@
 <?php
+
 ob_start();
 session_start();
 
+
+
 // ************* For PoSTGRES
-    $dsn = "pgsql:host=172.16.58.11;dbname=corgis_users;port=5432";
+    $dsn = "pgsql:host='geo.corelineengineering.com';dbname=corgis_users;port=5432";
     $opt = [
         PDO::ATTR_ERRMODE               => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE    => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES      => false
     ];
     try {
+    
     $pdo = new PDO($dsn, 'postgres', 'IPX4_ce_UK_CA', $opt);
     }  catch(PDOException $e) {
         // php_functions.php is not executed before this block, thus log an error undifined 
@@ -17,15 +21,33 @@ session_start();
         //log_an_error($pdo, $e->getMessage() );
 
         // temp solution
+//        try {
+//            $db = new SQLite3('local_error.db');
+//            $sql = "INSERT INTO local_errors (time_logged, error_logged) VALUES (datetime('now'), :error)";
+//            $stmnt = $db->prepare($insertQuery);
+//            $stmnt->bindParam(':error', $the_error, SQLITE3_TEXT);
+//            $stmnt->execute();
+//        } catch (Exception $e) {
+//            echo "Error: " . $e->getMessage();
+//            redirect('oops.php');
+//        }
+        
+         $the_error = $e->getMessage();
         try {
             $db = new SQLite3('local_error.db');
             $sql = "INSERT INTO local_errors (time_logged, error_logged) VALUES (datetime('now'), :error)";
-            $stmnt = $db->prepare($insertQuery);
-            $stmnt->bindParam(':error', $the_error, SQLITE3_TEXT);
-            $stmnt->execute();
+            $stmnt = $db->prepare($sql); // Use $sql instead of $insertQuery
+
+            if ($stmnt) { // Check if prepare() succeeded
+                $stmnt->bindParam(':error', $the_error, SQLITE3_TEXT);
+                $stmnt->execute();
+            } else {
+                throw new Exception('Failed to prepare SQL statement');
+            }
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
-            redirect('oops.php');
+            // It's better to log the error or take some other action before redirecting
+            // redirect('oops.php');
         }
 
 
