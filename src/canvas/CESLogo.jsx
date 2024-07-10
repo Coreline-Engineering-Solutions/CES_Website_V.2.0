@@ -21,7 +21,7 @@ const CES = ({ isMobile }) => {
 
       <primitive
         object={logo.scene}
-        scale={isMobile ? 0.3 : 0.50}// Adjust rotation to tilt downwards
+        scale={isMobile ? 0.3 : 0.45}// Adjust rotation to tilt downwards
         position={isMobile ? [-0.25, 0, -2.2] : [-0.5, 0.25, 0]}
       />
     </mesh>
@@ -33,7 +33,7 @@ const CESCanvas = () => {
 
   useEffect(() => {
     // Add a listener for changes to the screen size
-    const mediaQuery = window.matchMedia("(max-width: 500px)");
+    const mediaQuery = window.matchMedia("(max-width: 250px)");
 
     // Set the initial value of the `isMobile` state variable
     setIsMobile(mediaQuery.matches);
@@ -55,7 +55,7 @@ const CESCanvas = () => {
   return (
     <Canvas
     frameloop='demand'
-    camera={{ position: [12, 9, 0], fov: 25 }}
+    camera={{ position: isMobile ? [10, 7, 0]:[12, 9, 0], fov: 25 }}
     shadows
     dpr={[1, 2]}
     gl={{ preserveDrawingBuffer: true }}
@@ -64,6 +64,12 @@ const CESCanvas = () => {
       <OrbitControls
         enableZoom={false}
         autoRotate
+        enablePan={false} // Disable panning
+        mouseButtons={{
+          LEFT: THREE.MOUSE.ROTATE,
+          MIDDLE: THREE.MOUSE.DOLLY,
+          RIGHT: THREE.MOUSE.NONE // Disable right-click dragging
+        }}
       />
         <CES isMobile={isMobile} />
         <Environment preset="sunset" /> {/* Adds an environment map for realistic lighting */}
