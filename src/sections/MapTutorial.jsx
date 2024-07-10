@@ -9,13 +9,16 @@ import { EditControl } from "react-leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
 import MapToolbar from '../components/MapToolbar';
 import axios from 'axios';  // Make sure to install axios using `npm install axios`
+import { MapEventsHandler } from '../components';
+import { TILE_LAYERS } from './map_tile_provider';
 
 const MapTutorial = () => {
-
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
-    const [lines, setLines] = useState([]); // Define lines state and setLines function
+    const [lines, setLines] = useState([]); // Define lines state and setLines function\
+    const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.openStreetMapUK);
 
-    const _ZOOM_LEVEL = 13
+
+    const _ZOOM_LEVEL = 13;
     const mapRef = useRef();
     const startCoords = 0;
     const endCoords = 0;
@@ -48,16 +51,31 @@ const MapTutorial = () => {
         //         console.error('Error sending coordinates:', error);
         //     });
 
+        console.log(data);
+    };
 
-        console.log(data)
+    const handleRightClick = (e) => {
+        // Trigger the same functionality as the polyline creation event
+        const map = mapRef.current;
+        if (map) {
+            const layers = map._layers;
+            Object.values(layers).forEach((layer) => {
+                if (layer instanceof L.Polyline && layer.editing.enabled()) {
+                    const latlngs = layer.getLatLngs();
+                    const startCoords = latlngs[0];
+                    const endCoords = latlngs[latlngs.length - 1];
+                    sendCoordinates(startCoords, endCoords);
+                    layer.editing.disable(); // Disable editing to simulate finishing the line
+                }
+            });
+        }
     };
 
     const marker = new L.icon({
-
         iconUrl: marker_map,
         iconSize: [35, 45],
         iconAnchor: [17, 45],
-    })
+    });
 
     const location = geolocation();
 
@@ -76,51 +94,46 @@ const MapTutorial = () => {
         }
     };
 
-        const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Simulate loading process
         setTimeout(() => {
-          setIsLoading(false);
+            setIsLoading(false);
         }, 3000); // Adjust the time as needed
     }, []);
 
     return (
-        
-        <div id='narrative' className="h-[700px] w-full">
-            <MapToolbar onShowLocation={showMyLocation} />
-            <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-[750px] w-full z-10">
+        <div id='narrative' className="h-full w-full">
+            <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer}   />
+            <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-full w-full z-10">
                 <FeatureGroup>
                     <EditControl
                         position="topright"
                         onCreated={_created}
-                        draw={
-                            {
-                                /* rectangle: false,
+                        draw={{
+                            /* rectangle: false,
                               circle: false,
                               circlemarker: false,
                               marker: false,
                               polyline: false, */
-                            }
-                        }
+                        }}
                     />
                 </FeatureGroup>
-                <TileLayer url={streetMap.maptiler.url} attribution={streetMap.maptiler.attribution} />
+                <TileLayer url={currentTileLayer.url} attribution={currentTileLayer.attribution} maxZoom={currentTileLayer.maxZoom} />
                 {location.loaded && !location.error && (
                     <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker}>
                     </Marker>
                 )}
                 <Marker position={[-33.9249, 18.4241]} icon={marker}>
                     <Popup>
-                        <p>
-                            First Marker
-                        </p>
+                        <p>First Marker</p>
                     </Popup>
                 </Marker>
+                <MapEventsHandler onRightClick={handleRightClick} />
             </MapContainer>
         </div>
-    )
-}
+    );
+};
 
-
-export default MapTutorial
+export default MapTutorial;

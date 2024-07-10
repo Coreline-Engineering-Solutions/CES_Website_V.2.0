@@ -1,5 +1,31 @@
 import { facebook, instagram, support, twitter, secure, map, clock, planning, brainstorm, done, execute, monitor, design, } from "../assets/icons";
 import { Levi, Gustav, CESphoto1, CESphoto2, CESphoto3, AI1, AI2, AI3, AI4, AI5 } from "../assets/images";
+import { Chat, Maptool, Progress, ToolIcon2 } from "../assets/icons";
+
+export const DashboardServices = [
+    { path: "/narrative", icon: Chat, label: "Narrative Tool", description: "Create and edit narratives effortlessly." },
+    { path: "#gis", icon: Maptool, label: "GIS System", description: "Analyze geographic data seamlessly." },
+    { path: "#feasability", icon: ToolIcon2, label: "Feasibility", description: "Evaluate project feasibility quickly." },
+    { path: "#coming", icon: Progress, label: "COMING SOON", description: "Stay tuned for new features!" }
+];
+export const tasks = [
+    {
+        title: 'BRSK',
+        subtitle: 'AX-JKA-103',
+        description: 'Clean Joint 102',
+        detail: 'Joint 102 is not the right colour and the sky needs to be blue not white. While at it bring me a coffee with 2 and a half cookies.',
+        imageSrc: './resources/BRSK Icon.png',
+        imageAlt: 'BRSK Icon'
+    },
+    {
+        title: 'Velox',
+        subtitle: 'AK-AST-102',
+        description: 'Export to PDF',
+        detail: 'Can you please export this PDF and send it to our Finance Department for approval.',
+        imageSrc: null,
+        imageAlt: 'Thumbnail'
+    }
+];
 
 export const navLinks = [
     { href: "#about", label: "About Us" },

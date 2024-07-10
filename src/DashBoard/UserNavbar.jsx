@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
-import { CESLogo,Logo } from '../assets/images';
+import { ces} from '../assets/images';
 import { Signout } from '../assets/icons';
+import { useNavigate } from 'react-router-dom';
+import { MapToolbar } from '../components';
+
 
 const UserNavbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleSignOut = (e) => {
+        e.stopPropagation();
+        // Perform any necessary sign-out logic here (e.g., clearing authentication tokens)
+        // Navigate to the login page
+        navigate('/Login');
     };
 
     return (
@@ -17,7 +28,7 @@ const UserNavbar = () => {
                 <div className="text-lg font-semibold flex items-center space-x-2">
                     <img
                         className="drop-shadow-xl"
-                        src={Logo}
+                        src={ces}
                         alt="Logo"
                         width={60}
                     />
@@ -48,7 +59,7 @@ const UserNavbar = () => {
                             <ul>
                                 <li className="px-4 py-2 hover:bg-blue-500 cursor-pointer">View Profile</li>
                                 <li className="px-4 py-2 hover:bg-blue-500 cursor-pointer">Account Settings</li>
-                                <li className="px-4 py-2 hover:bg-red-500 cursor-pointer flex flex-row gap-2">                        
+                                <li onClick={handleSignOut} className="px-4 py-2 hover:bg-red-500 cursor-pointer flex flex-row gap-2">                        
                                     <img
                                     className="drop-shadow-xl"
                                     src={Signout}

@@ -15,6 +15,8 @@ import ProgressCardHouse from "./ProgressCardHouse";
 import Loader from "./WebLoader";
 import MapToolbar from "./MapToolbar";
 import RedirectButton from "./RedirectButton";
+import MapEventsHandler from "./MapEventsHandler";
+import MapTileDropdown from "./MapTileDropdown";
 
 export {
   Roadmap,
@@ -34,4 +36,6 @@ export {
   Loader,
   MapToolbar,
   RedirectButton,
+  MapEventsHandler,
+  MapTileDropdown,
 };

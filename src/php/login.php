@@ -30,7 +30,7 @@
         $rawData = file_get_contents('php://input');
         // Decode the JSON data
         $postData = json_decode($rawData, true);
-
+        $result='';
         $email = $postData['email'];
         $password = $postData['password'];
         $remember = $postData['remember'];
@@ -56,17 +56,18 @@
                     user_login_session_start($pdo, $username, $cookie_exp, $last_page, $user_ip, $user_host, $user_port);
                     // temporary place for update since we know db must be active at this stage, might automate/timed script in the future
                     transfer_logs($pdo);
-                    echo '_True';
+                    echo json_encode(['result' => "_TRUE"]);
+      
                 } else {
-                    echo '_False';
+                    echo json_encode(['result' => "FALSE"]);
                 }
             } else {
-                echo '_False';
+                echo json_encode(['result' => "FALSE"]);
             }
         } else {
-            echo '_False';
+            echo json_encode(['result' => "FALSE"]);
         }
     } else {
-        echo '_False';
+        echo json_encode(['result' => "FALSE"]);
     }
 ?>

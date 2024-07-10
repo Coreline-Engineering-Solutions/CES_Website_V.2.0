@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import axios from 'axios';
 import { ces, Loginbg } from '../assets/images';
-// import { useHistory } from 'react-router-dom'; // Assuming you're using React Router for navigation
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate  } from 'react-router-dom';
+
 
 const Login = () => {
-    // const history = useHistory(); // Hook for navigation
-
+    const navigate = useNavigate();
     // State to hold form data
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         remember: false // Initially set to false for "Remember me" checkbox
     });
+
+    const [loginResult, setLoginResult] = useState('');
 
     // Function to handle input changes
     const handleChange = (e) => {
@@ -42,14 +46,32 @@ const Login = () => {
                 }
             });
 
-            console.log(response.data); // Log the response data to console (for debugging)
+            const result = response.data;
+
+            if (result === '_True') {
+                setLoginResult('_True');
+            } else {
+                setLoginResult('_False');
+            }
+
+            console.log(setLoginResult); // Log the response data to console (for debugging)
             // Redirect user to '/gis' upon successful login
             // history.push('/gis'); // Replace '/gis' with your desired redirect path
         } catch (error) {
             console.error('Error logging in:', error); // Log any errors encountered during login
             // Handle error messages or display them to the user
+            toast.error('An error occurred during login. Please try again.');
         }
     };
+            // Use effect to watch loginResult and show toast
+            useEffect(() => {
+                if (loginResult === '_True') {
+                    toast.success('Login successful!');
+                    navigate('/DashBoard');
+                } else if (loginResult === '_False') {
+                    toast.error('Login failed. Please check your credentials and try again.');
+                }
+            }, [loginResult]);
 
     return (
         <div id='login' className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-300 flex justify-center items-center" style={{ backgroundImage: `url(${Loginbg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
@@ -92,6 +114,7 @@ const Login = () => {
                     <a href="./register.php" className="text-primary-600 hover:text-primary-800">Register</a>
                 </div>
             </div>
+            <ToastContainer/>
         </div>
     );
 };

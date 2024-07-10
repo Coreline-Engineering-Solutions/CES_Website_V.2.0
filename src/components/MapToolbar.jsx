@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import MapTileDropdown from './MapTileDropdown';
+import { TILE_LAYERS } from '../sections/map_tile_provider';
+
 
 // Dropdown component that handles its open/close state based on props
 const Dropdown = ({ label, isOpen, onToggle, children }) => {
@@ -20,7 +23,7 @@ const Dropdown = ({ label, isOpen, onToggle, children }) => {
     );
 };
 
-const MapToolbar = ({ onShowLocation }) => {
+const MapToolbar = ({ onShowLocation ,onTileLayerChange }) => {
     // State to track which dropdown is open, by label
     const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -38,10 +41,39 @@ const MapToolbar = ({ onShowLocation }) => {
             <div className="text-white text-lg font-semibold">Narrative Mapping Tool</div>
             <div className="space-x-6">
                 <ul className="flex space-x-4">
+
+                    {/* Add MapTileDropdown here */}
+                    <li>
+                        <Dropdown
+                            label="Change Map Tile"
+                            isOpen={openDropdown === 'Change Map Tile'}
+                            onToggle={() => toggleDropdown('Change Map Tile')}
+                        >
+                            <div className="p-2 flex flex-col">
+                                {Object.keys(TILE_LAYERS).map(layerKey => (
+                                    <button
+                                        key={layerKey}
+                                        onClick={() => onTileLayerChange(TILE_LAYERS[layerKey])}
+                                        className="w-full text-left p-2 hover:bg-gray-200"
+                                    >
+                                       <div>
+                                       {layerKey}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </Dropdown>
+                    </li>
                     <li className="p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
                         <Link to='/'>Home</Link>
                     </li>
-                    <li>
+                    <li className="p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
+                        <Link to='/DashBoard'>DashBoard</Link>
+                    </li>
+                    <li onClick={(onShowLocation)} className="p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
+                        Locate Me
+                    </li>
+                    {/* <li>
                         <Dropdown
                             label="Enable Drawing"
                             isOpen={openDropdown === 'Enable Drawing'}
@@ -65,8 +97,9 @@ const MapToolbar = ({ onShowLocation }) => {
                                 <button className="w-full text-left p-2 hover:bg-gray-200">Option 2</button>
                             </div>
                         </Dropdown>
-                    </li>
-                    
+                    </li> */}
+
+
                     {/* Add more Dropdown components similarly */}
                 </ul>
             </div>
