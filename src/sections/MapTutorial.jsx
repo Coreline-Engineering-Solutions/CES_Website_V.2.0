@@ -15,7 +15,7 @@ import { TILE_LAYERS } from './map_tile_provider';
 const MapTutorial = () => {
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
     const [lines, setLines] = useState([]); // Define lines state and setLines function\
-    const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.openStreetMapUK);
+    const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.OpenStreetMapUK);
 
 
     const _ZOOM_LEVEL = 13;

@@ -16,11 +16,6 @@
         exit;
     }
 
-
-
-
-
-
     include "connections.php";
 
 

@@ -48,7 +48,7 @@ export const TILE_LAYERS = {
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         header: '© OpenStreetMap',
         attribution: '© OpenStreetMap',
-        maxZoom: 1,
+        maxZoom: 19,
     },
     CartoDBPositron: {
         url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
