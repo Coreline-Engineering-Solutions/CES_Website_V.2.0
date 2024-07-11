@@ -99,8 +99,44 @@
     }
 
 
+    // get validation code
+    function get_validationcode($email, $pdo) {
+        try {
+            $sql="SELECT validationcode FROM user_profiles.users WHERE email=:email";
+            $stmnt=$pdo->prepare($sql);
+            $stmnt->execute([':email'=>$email]);
+            $row = $stmnt->fetch();
+            return $row['validationcode'];
+        } catch(PDOException $e) {
+            return $e->getMessage();
+        }
+    }
 
 
+    //Generate validation token
+    function generate_token() {
+        return md5 (microtime().mt_rand());
+    }
+
+
+    //Send email
+    function send_mail($to, $subject, $body, $from, $reply) {
+        
+        
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: {$from}" . "\r\n";
+        $headers .= "Reply-To: {$reply}" . "\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+
+
+    
+        if (mail($to, $subject, $body, $headers)) {
+            echo "_S";
+        } else {
+            echo "Failed to send email";
+        }
+    }
 
 
 ?>
