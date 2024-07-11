@@ -9,9 +9,10 @@ import Hero from "./Hero";
 import Expierence from "./Expierence";
 import MapTutorial from "./MapTutorial";
 import Login from "./Login";
+import DashBoard from "../DashBoard/DashBoard";
 
 export {
-
+  DashBoard,
   Navbar,
   AboutUs,
   Services,

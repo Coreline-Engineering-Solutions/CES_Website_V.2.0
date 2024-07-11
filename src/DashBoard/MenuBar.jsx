@@ -1,5 +1,5 @@
 import React from 'react';
-import { services } from '../constants';
+import { DashboardServices } from '../constants';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const MenuBar = ({ isMinimized, toggleMenuBar }) => {
@@ -19,7 +19,7 @@ const MenuBar = ({ isMinimized, toggleMenuBar }) => {
             </div>
 
             <div className="flex-1 bg-blue-900 p-4 rounded-b-full">
-                {services.map((item, index) => (
+                {DashboardServices.map((item, index) => (
                     <div
                         key={index}
                         className="flex items-center  p-3 hover:bg-gray-500 rounded-md justify-start cursor-pointer transition duration-100 "

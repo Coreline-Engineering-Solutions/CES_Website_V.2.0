@@ -23,6 +23,7 @@ import  Signout from './signout.svg'
 import Minimize from './minimize.svg'
 import ToolIcon from './tools_icon.svg'
 import ToolIcon2 from './tools_icon2.svg'
+
 import Chat from './chat.svg'
 import Maptool from './maptool.svg'
 import Progress from './progress.svg'
@@ -51,7 +52,7 @@ export {
     map,
     clock,
     secure,
-    ToolIcon2,
+        ToolIcon2,
     ToolIcon,
     Signout,
     Minimize,
