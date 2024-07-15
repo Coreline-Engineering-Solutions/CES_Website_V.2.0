@@ -10,6 +10,8 @@ import Expierence from "./Expierence";
 import MapTutorial from "./MapTutorial";
 import Login from "./Login";
 import DashBoard from "../DashBoard/DashBoard";
+import Register from "./Register"
+import Verification from "./Verification";
 
 export {
   DashBoard,
@@ -24,5 +26,7 @@ export {
   Expierence,
   MapTutorial,
   Login,
+  Register,
+  Verification,
 
 };

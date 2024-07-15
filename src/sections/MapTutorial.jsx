@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents, useMap, FeatureGroup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import streetMap from './map_tile_provider';
 import L from 'leaflet';
 import { marker_map } from '../assets/icons';
 import { geolocation } from '../hooks';
@@ -9,7 +8,7 @@ import { EditControl } from "react-leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
 import MapToolbar from '../components/MapToolbar';
 import axios from 'axios';  // Make sure to install axios using `npm install axios`
-import { MapEventsHandler } from '../components';
+import { MapEventsHandler, MapLayers } from '../components';
 import { TILE_LAYERS } from './map_tile_provider';
 
 const MapTutorial = () => {
@@ -105,33 +104,40 @@ const MapTutorial = () => {
 
     return (
         <div id='narrative' className="h-full w-full">
-            <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer}   />
-            <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-full w-full z-10">
-                <FeatureGroup>
-                    <EditControl
-                        position="topright"
-                        onCreated={_created}
-                        draw={{
-                            /* rectangle: false,
-                              circle: false,
-                              circlemarker: false,
-                              marker: false,
-                              polyline: false, */
-                        }}
-                    />
-                </FeatureGroup>
-                <TileLayer url={currentTileLayer.url} attribution={currentTileLayer.attribution} maxZoom={currentTileLayer.maxZoom} />
-                {location.loaded && !location.error && (
-                    <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker}>
+
+            <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
+            <div className='flex h-full'>
+                <MapLayers />
+                <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="z-10">
+                    <FeatureGroup>
+                        <EditControl
+                            position="topright"
+                            onCreated={_created}
+                            draw={{
+                                /* rectangle: false,
+                                  circle: false,
+                                  circlemarker: false,
+                                  marker: false,
+                                  polyline: false, */
+                            }}
+                        />
+                    </FeatureGroup>
+                    <TileLayer url={currentTileLayer.url} attribution={currentTileLayer.attribution} maxZoom={currentTileLayer.maxZoom} />
+                    {location.loaded && !location.error && (
+                        <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker}>
+                        </Marker>
+                    )}
+                    <Marker position={[-33.9249, 18.4241]} icon={marker}>
+                        <Popup>
+                            <p>First Marker</p>
+                        </Popup>
                     </Marker>
-                )}
-                <Marker position={[-33.9249, 18.4241]} icon={marker}>
-                    <Popup>
-                        <p>First Marker</p>
-                    </Popup>
-                </Marker>
-                <MapEventsHandler onRightClick={handleRightClick} />
-            </MapContainer>
+                    <MapEventsHandler onRightClick={handleRightClick} />
+                </MapContainer>
+
+
+            </div>
+
         </div>
     );
 };

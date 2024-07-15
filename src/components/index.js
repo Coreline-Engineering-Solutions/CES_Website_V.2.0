@@ -17,6 +17,7 @@ import MapToolbar from "./MapToolbar";
 import RedirectButton from "./RedirectButton";
 import MapEventsHandler from "./MapEventsHandler";
 import MapTileDropdown from "./MapTileDropdown";
+import MapLayers from "./MapLayers";
 
 export {
   Roadmap,
@@ -38,4 +39,5 @@ export {
   RedirectButton,
   MapEventsHandler,
   MapTileDropdown,
+  MapLayers,
 };

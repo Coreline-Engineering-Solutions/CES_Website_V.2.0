@@ -15,12 +15,10 @@
   height: 100vh;
   width: 100%;
 }
-
 .leaflet-container {
   height: 100%;
-  width: 100%;
+  width: 80%;
 }
-
 @layer components {
   .max-container {
     max-width: 1440px;

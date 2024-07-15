@@ -2,6 +2,22 @@ import { facebook, instagram, support, twitter, secure, map, clock, planning, br
 import { Levi, Gustav, CESphoto1, CESphoto2, CESphoto3, AI1, AI2, AI3, AI4, AI5 } from "../assets/images";
 import { Chat, Maptool, Progress, ToolIcon2 } from "../assets/icons";
 
+export const layers = [
+    {
+      name: 'Layer 1',
+      lines: ['line1', 'line2', 'line3']
+    },
+    {
+      name: 'Layer 2',
+      lines: ['line1', 'line2']
+    },
+    {
+      name: 'Layer 3',
+      lines: ['line1', 'line2', 'line3', 'line4']
+    },
+  ];
+
+
 export const DashboardServices = [
     { path: "/narrative", icon: Chat, label: "Narrative Tool", description: "Create and edit narratives effortlessly." },
     { path: "#gis", icon: Maptool, label: "GIS System", description: "Analyze geographic data seamlessly." },
