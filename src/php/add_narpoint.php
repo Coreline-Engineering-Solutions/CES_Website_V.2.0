@@ -12,7 +12,7 @@
         if ($user_name && $point_data) {
             try {
                 // Prepare SQL statement
-                $sql = "INSERT INTO website.nar_point (username, point_as_text) VALUES (:user_name, :point_data)";
+                $sql = "INSERT INTO website.nar_point (username, point_as_text, active_session) VALUES (:user_name, :point_data, 'active')";
                 $stmt = $pdo->prepare($sql);
 
                 // Bind parameters

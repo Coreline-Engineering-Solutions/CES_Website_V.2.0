@@ -23,11 +23,18 @@
 
 
     if ($_SERVER['REQUEST_METHOD']=="POST") {
-      $uname = $_POST['username'];
-      $email = $_POST['email'];
-      $e_conf = $_POST['email_confirm'];
-      $pword = $_POST['password'];
-      $p_conf = $_POST['password_confirm'];
+
+      $rawData = file_get_contents('php://input');
+      $postData = json_decode($rawData, true);
+      $result='';
+
+
+
+      $uname = $_postData['username'];
+      $email = $_postData['email'];
+      $e_conf = $_postData['email_confirm'];
+      $pword = $_postData['password'];
+      $p_conf = $_postData['password_confirm'];
 
       $errors = [];
 
