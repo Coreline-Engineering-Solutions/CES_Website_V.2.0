@@ -49,10 +49,14 @@ const Hero = () => {
                         <p className="p-2 font-montserrat text-white text-lg leading-7">
                             At Coreline Engineering Solutions, we excel in delivering innovative design services that redefine the telecommunications landscape. Based in South Africa, our diverse perspective drives global connectivity, connecting communities and businesses worldwide. As industry leaders, we consistently pioneer cutting-edge solutions, fostering growth and connectivity. Join us on our mission to build a connected future without limits.
                         </p>
-                        <Button label="Contact us" iconURL={arrowRight} />
+                        <a href="#contact" className="flex hover:bg-[#6d7eff] justify-center items-center gap-2 bg-[#00309e] text-white m-2 px-4 py-3 rounded-full">
+                                Contact Us
+                                <img src={arrowRight} alt="arrow right icon" className="ml-2 rounded-full w-8 h-8" />
+                            </a>
+
                         <div className="flex justify-center items-start flex-wrap w-full mt-16 gap-16">
                             <ProgressCardHelp />
-                             <ProgressCardCable />
+                            <ProgressCardCable />
                             <ProgressCardHouse />
                         </div>
                     </div>

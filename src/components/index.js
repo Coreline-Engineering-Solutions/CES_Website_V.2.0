@@ -19,6 +19,7 @@ import MapEventsHandler from "./MapEventsHandler";
 import MapTileDropdown from "./MapTileDropdown";
 import MapLayers from "./MapLayers";
 import Search from "./Search";
+import ScrollToTopButton from "./ScrollToTopButton";
 
 export {
   Roadmap,
@@ -42,4 +43,5 @@ export {
   MapTileDropdown,
   MapLayers,
   Search,
+  ScrollToTopButton,
 };

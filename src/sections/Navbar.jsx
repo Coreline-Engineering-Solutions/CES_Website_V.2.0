@@ -10,7 +10,7 @@ const Navbar = () => {
 	const [toggle, setToggle] = useState(false);
 
 	return (
-		<header className="absolute top-0 left-0 right-0 z-10 w-full">
+		<header className="relative top-0 left-0 right-0 z-10 w-full">
 			<nav className="flex justify-between items-center px-4 py-2 bg-white shadow-md">
 				<a href="/">
 					<img
@@ -25,12 +25,12 @@ const Navbar = () => {
 					{navLinks.map((nav) => (
 						<li
 							key={nav.href}
-							className="p-3 text-black text-[18px] rounded-full cursor-pointer duration-300 hover:bg-blue-800 hover:text-white font-semibold text-center transition-all ease-in-out"
+							className="p-4 text-black text-[18px] rounded-full cursor-pointer duration-300 hover:bg-blue-800 hover:text-white font-semibold text-center transition-all ease-in-out"
 						>
 							<a href={nav.href}>{nav.label}</a>
 						</li>
 					))}
-					<li className="p-3 text-black text-[18px] rounded-full cursor-pointer duration-300 hover:bg-blue-800 hover:text-white font-semibold text-center transition-all ease-in-out">
+					<li className="p-4 text-black text-[18px] rounded-full cursor-pointer duration-300 hover:bg-blue-800 hover:text-white font-semibold text-center transition-all ease-in-out">
 						<Link to="/Login">Sign Up/Login</Link>
 					</li>
 				</ul>

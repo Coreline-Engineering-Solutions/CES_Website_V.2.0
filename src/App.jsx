@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, AboutUs, Services, OurServices, Managers, Subcribe, Footer, Hero, Expierence,MapTutorial } from './sections';
-import { Loader } from './components';
+import { Navbar, AboutUs, Services, OurServices, Managers, Subcribe, Footer, Hero, Expierence, MapTutorial } from './sections';
+import { Loader, ScrollToTopButton } from './components';
+import { ces, Loginbg } from './assets/images';
+
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -8,7 +10,7 @@ function App() {
     useEffect(() => {
         // Simulate loading process
         setTimeout(() => {
-          setIsLoading(false);
+            setIsLoading(false);
         }, 3000); // Adjust the time as needed
     }, []);
 
@@ -18,28 +20,31 @@ function App() {
                 <Loader />
             ) : (
                 <>
-                    <Navbar />
-                    <section>
-                        <Hero />
-                    </section>
-                    <section className="padding">
-                        <AboutUs />
-                    </section>
-                    <section className="">
-                        <Services />
-                    </section>
-                    <section className="">
-                        <OurServices />
-                    </section>
-                    <section className="padding">
-                        <Expierence />
-                    </section>
-                    <section className="padding-x sm:py-32 py-16 w-full">
-                        <Subcribe />
-                    </section>
-                    <section className="padding-x bg-slate-950 sm:py-32 py-16 w-full">
-                        <Footer />
-                    </section>
+                    <main >
+                        <Navbar />
+                        <section>
+                            <Hero />
+                        </section>
+                        <section >
+                            <AboutUs />
+                        </section>
+                        <section className="">
+                            <Services />
+                        </section>
+                        <section className="">
+                            <OurServices />
+                        </section>
+                        <section >
+                            <Expierence />
+                        </section>
+                        <section className="padding">
+                            <Subcribe />
+                        </section>
+                        <section className="padding-x bg-slate-950 sm:py-32 py-16 w-full">
+                            <Footer />
+                        </section>
+                        <ScrollToTopButton/>
+                    </main>
                 </>
             )}
         </main>
