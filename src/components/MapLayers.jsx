@@ -4,7 +4,7 @@ import { FaDownload, FaMap, FaTrashAlt, FaLayerGroup } from 'react-icons/fa';
 
 const MapLayers = () => {
     return (
-        <div className="h-full w-1/5 bg-gray-100 p-4  border-2 overflow-y-auto">
+        <div className="h-full w-1/5 bg-gray-100 p-4  border-2 overflow-y-auto"> 
             <table className="min-w-full border-collapse">
                 <thead>
                     <tr className="bg-gray-200">
@@ -27,7 +27,7 @@ const MapLayers = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="mt-6 flex flex-col space-y-4">
+            <div className="mt-6 w-3/5 flex flex-col space-y-4">
                 <button
                     className="flex items-center justify-center p-3 bg-blue-900 hover:bg-[#6d7eff] transition-colors duration-300 text-white rounded-xl"
                     aria-label="Download CSV"

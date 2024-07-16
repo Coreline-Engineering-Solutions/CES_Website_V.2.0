@@ -86,11 +86,11 @@ function Register() {
     };
 
     useEffect(() => {
-        if (registerResult === '_True') {
+        if (registerResult === '_S') {
             toast.success('Registration successful! Please check your email for a verification code.');
             navigate('/Verification'); // Ensure this rouwte exists
             setRegisterResult(''); // Reset RegisterResult after successful registration
-        } else if (registerResult === '_False') {
+        } else {
             toast.error('Registration failed. Please try again.');
             setRegisterResult(''); // Reset RegisterResult after displaying error message
         }

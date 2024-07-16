@@ -10,7 +10,7 @@ import { SectionWrapper } from '../hoc';
 
 const Hero = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const images = [CESphoto1, CESphoto2, CESphoto3, CESbuilding, CESteam];
+    const images = [CESphoto1, CESphoto2, CESbuilding, CESteam];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -22,11 +22,11 @@ const Hero = () => {
 
     return (
         <div className="relative overflow-hidden ">
-            <div className="absolute inset-0 justify-center items-center">
+            <div className="inset-0 justify-end items-end">
                 {images.map((image, index) => (
                     <img
                         key={index}
-                        className={`h-full w-full object-cover absolute transition-opacity rounded-r-lg duration-1000 ease-in-out ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
+                        className={`h-screen w-screen object-cover absolute transition-opacity rounded-r-lg duration-1000 ease-in-out ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
                         src={image}
                         alt={`Image ${index + 1}`}
                         style={{
@@ -52,7 +52,7 @@ const Hero = () => {
                         <Button label="Contact us" iconURL={arrowRight} />
                         <div className="flex justify-center items-start flex-wrap w-full mt-16 gap-16">
                             <ProgressCardHelp />
-                            <ProgressCardCable />
+                             <ProgressCardCable />
                             <ProgressCardHouse />
                         </div>
                     </div>

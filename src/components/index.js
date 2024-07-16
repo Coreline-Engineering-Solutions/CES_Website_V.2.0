@@ -18,6 +18,7 @@ import RedirectButton from "./RedirectButton";
 import MapEventsHandler from "./MapEventsHandler";
 import MapTileDropdown from "./MapTileDropdown";
 import MapLayers from "./MapLayers";
+import Search from "./Search";
 
 export {
   Roadmap,
@@ -40,4 +41,5 @@ export {
   MapEventsHandler,
   MapTileDropdown,
   MapLayers,
+  Search,
 };

@@ -21,7 +21,7 @@ const CES = ({ isMobile }) => {
 
       <primitive
         object={logo.scene}
-        scale={isMobile ? 0.3 : 0.45}// Adjust rotation to tilt downwards
+        scale={isMobile ? 0.2 : 0.5}// Adjust rotation to tilt downwards
         position={isMobile ? [-0.25, 0, -2.2] : [-0.5, 0.25, 0]}
       />
     </mesh>

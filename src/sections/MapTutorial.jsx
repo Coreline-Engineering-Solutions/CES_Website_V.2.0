@@ -10,6 +10,7 @@ import MapToolbar from '../components/MapToolbar';
 import axios from 'axios';  // Make sure to install axios using `npm install axios`
 import { MapEventsHandler, MapLayers } from '../components';
 import { TILE_LAYERS } from './map_tile_provider';
+import Search from '../components/Search';
 
 const MapTutorial = () => {
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
@@ -108,6 +109,7 @@ const MapTutorial = () => {
             <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
             <div className='flex h-full'>
                 <MapLayers />
+            
                 <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="z-10">
                     <FeatureGroup>
                         <EditControl
@@ -133,6 +135,7 @@ const MapTutorial = () => {
                         </Popup>
                     </Marker>
                     <MapEventsHandler onRightClick={handleRightClick} />
+                    <Search />
                 </MapContainer>
 
 

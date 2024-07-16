@@ -25,7 +25,7 @@
     if ($_SERVER['REQUEST_METHOD']=="POST") {
 
       $rawData = file_get_contents('php://input');
-      $postData = json_decode($rawData, true);
+      $_postData = json_decode($rawData, true);
       $result='';
 
 
