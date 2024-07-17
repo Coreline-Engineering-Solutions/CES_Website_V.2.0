@@ -21,6 +21,7 @@ const ExperienceCard = ({ experience }) => {
 			}}
 			contentArrowStyle={{ borderRight: "7px solid  #bg-black " }}
 			icon={
+				
 				<div className='flex justify-center items-center w-full h-full '>
 					<img
 						src={experience.icon}
@@ -57,10 +58,11 @@ const Experience = () => {
 		<>
 			<motion.div variants={textVariant()}>
 
-				<h2 id='client' className={`font-palanquin text-4xl font-bold  text-[#00309e] text-center`}>
-					Client Overview
-				</h2>
-				<p className={`${styles.sectionSubText} text-center info-text`}>
+			<h3 id="client" className="font-palanquin mx-auto text-center text-4xl font-bold max-w-3xl">
+				Client
+				<span className="text-[#00309e] font-bold"> Overview </span>
+			</h3>
+				<p className={`text-center mt-4 m-auto info-text max-w-4xl`}>
 					Coreline Engineering Solutions, we're dedicated to revolutionizing the telecommunications landscape with our innovative services. From designing robust infrastructure to optimizing network performance, we offer a comprehensive suite of solutions tailored to meet the evolving needs of our clients. Our expertise encompasses:
 				</p>
 			</motion.div>

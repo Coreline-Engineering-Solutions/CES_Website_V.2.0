@@ -13,7 +13,7 @@ const AboutUs = () => {
 		window.open('/CES.pdf', '_blank');
 	};
 	return (
-		<section id="section1" className="flex justify-center max-lg:flex-col gap-10 w-full max-container">
+		<section id="section1" className="flex justify-center max-lg:flex-col gap-14 w-full max-container">
 
 			<motion.div variants={fadeIn("right", "spring")}>
 				<div className="flex flex-col flex-1">
@@ -37,7 +37,7 @@ const AboutUs = () => {
 			</motion.div>
 
 			<div className="relative items-center flex flex-1 flex-col  justify-center drop-shadow-xl" >
-				<div className=" flex flex-1 flex-col w-[600px]">
+				<div className=" w-[600px] h-[600px]">
 					<CESCanvas />
 				</div>
 				<h2 className=" text-black text-center capitalize font-bold lg:max-w-lg">

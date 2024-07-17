@@ -15,33 +15,7 @@ const TaskCard = ({ }) => {
                     </div>
                 ))}
             </div>
-            {/* {imageSrc ? (
-                <div className="flex-none w-full md:w-48">
-                    <img
-                        className="object-cover w-full h-full"
-                        src={imageSrc}
-                        alt={imageAlt}
-                    />
-                </div>
-            ) : (
-                <div className="flex-none w-full md:w-48 bg-gray-600 flex items-center justify-center">
-                    <svg
-                        className="w-full h-full"
-                        xmlns="http://www.w3.org/2000/svg"
-                        role="img"
-                        aria-label="Placeholder: Thumbnail"
-                        preserveAspectRatio="xMidYMid slice"
-                        focusable="false"
-                        viewBox="0 0 200 250"
-                    >
-                        <title>Placeholder</title>
-                        <rect width="100%" height="100%" fill="#55595c"></rect>
-                        <text x="50%" y="50%" fill="#eceeef" dy=".3em" textAnchor="middle">
-                            Thumbnail
-                        </text>
-                    </svg>
-                </div>
-            )} */}
+        
         </div>
     );
 };

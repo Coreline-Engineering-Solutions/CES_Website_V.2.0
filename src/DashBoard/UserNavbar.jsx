@@ -44,18 +44,18 @@ const UserNavbar = () => {
                         onClick={toggleDropdown}
                     >
                         {/* Placeholder for user image */}
-                        <span className="text-xl font-semibold text-white">FD</span>
+                        <span className="text-xl font-semibold text-white">AD</span>
                     </div>
                     <div
                         className="text-center cursor-pointer"
                         onClick={toggleDropdown}
                     >
-                        <div className="text-xl text-black font-semibold">Fritz</div>
-                        <div className="text-lg text-black ">Derick</div>
+                        <div className="text-xl text-black font-semibold">Admin</div>
+                        <div className="text-lg text-black ">User</div>
                     </div>
 
                     {isDropdownOpen && (
-                        <div className="absolute z-50 top-full mt-2 w-48 bg-[#646467] border border-gray-200 rounded-md shadow-lg">
+                        <div className="absolute z-50 top-full mt-2 w-48 bg-blue-900 border border-gray-200 rounded-md shadow-lg">
                             <ul>
                                 <li className="px-4 py-2 hover:bg-blue-500 cursor-pointer">View Profile</li>
                                 <li className="px-4 py-2 hover:bg-blue-500 cursor-pointer">Account Settings</li>

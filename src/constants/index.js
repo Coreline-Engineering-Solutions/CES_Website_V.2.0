@@ -1,6 +1,22 @@
-import { facebook, instagram, support, twitter, secure, map, clock, planning, brainstorm, done, execute, monitor, design, } from "../assets/icons";
+import { facebook, instagram, support, twitter, secure, map, clock, planning, brainstorm, done, execute, monitor, design,Check } from "../assets/icons";
 import { Levi, Gustav, CESphoto1, CESphoto2, CESphoto3, AI1, AI2, AI3, AI4, AI5 } from "../assets/images";
 import { Chat, Maptool, Progress, ToolIcon2 } from "../assets/icons";
+
+export const layers = [
+    {
+      name: 'Layer 1',
+      lines: ['line1', 'line2', 'line3']
+    },
+    {
+      name: 'Layer 2',
+      lines: ['line1', 'line2']
+    },
+    {
+      name: 'Layer 3',
+      lines: ['line1', 'line2', 'line3', 'line4']
+    },
+  ];
+
 
 export const DashboardServices = [
     { path: "/narrative", icon: Chat, label: "Narrative Tool", description: "Create and edit narratives effortlessly." },
@@ -158,7 +174,7 @@ export const points = [
     { id: 2, imgURL: planning, title: 'Planning', description: ' Analyze data Clearly define the scope of work for the fiber design project. Include deliverables and exclusions Define quality standards for the fiber design Finalize Project Deliverables needed by the client' },
     { id: 3, imgURL: execute, title: 'Launch and Execution', description: 'Define and finalize Commercials Allocate and introduce account manager and team to the client. Define and Finalize Communication Plan  Conduct team orientation and training.' },
     { id: 4, imgURL: monitor, title: 'Monitoring and Control', description: 'Quality of deliverables Establish a process for identifying and resolving project constraints. Conduct regular quality inspections. Develop a protocol for handling changes to the project scope.' },
-    { id: 5, imgURL: done, title: 'Project Commencement', description: 'Compile project documentation and ensure its accessible. Plan for a smooth handover to the client’s  Project Management Team Provide training to end-users  Establish ongoing support mechanisms. Conduct a project evaluation and gather feedback. Establish a lessons learned register for future projects.' },
+    { id: 5, imgURL: Check, title: 'Project Commencement', description: 'Compile project documentation and ensure its accessible. Plan for a smooth handover to the client’s  Project Management Team Provide training to end-users  Establish ongoing support mechanisms. Conduct a project evaluation and gather feedback. Establish a lessons learned register for future projects.' },
 ];
 
 export const experiences = [
@@ -192,7 +208,7 @@ export const experiences = [
     },
     {
         title: "Project Commencement",
-        icon: done ,
+        icon: Check ,
         points: [
             "Compile project documentation and ensure its accessible. Plan for a smooth handover to the client’s  Project Management Team Provide training to end-users  Establish ongoing support mechanisms. Conduct a project evaluation and gather feedback. Establish a lessons learned register for future projects.",
         ],

@@ -9,8 +9,7 @@ const Services = () => {
   return (
     <>
         <motion.div       variants={fadeIn("up", "spring")}
-          id="services" className='max-container flex flex-wrap justify-center gap-9  '>
-
+          id="services" className=' flex flex-wrapc justify-center gap-9  '>
 
         {services.map((service, index) => (
           <ServiceCard key={service.label} index={index}  {...service} />

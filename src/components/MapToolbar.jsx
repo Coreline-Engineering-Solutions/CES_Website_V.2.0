@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MapTileDropdown from './MapTileDropdown';
 import { TILE_LAYERS } from '../sections/map_tile_provider';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 
 // Dropdown component that handles its open/close state based on props
@@ -37,7 +38,7 @@ const MapToolbar = ({ onShowLocation ,onTileLayerChange }) => {
     };
 
     return (
-        <nav className="bg-[#00309e] p-4 flex items-center justify-between gap-10 z-50 relative">
+        <nav className="bg-blue-900 p-4 flex items-center justify-between gap-10 z-50 relative">
             <div className="text-white text-lg font-semibold">Narrative Mapping Tool</div>
             <div className="space-x-6">
                 <ul className="flex space-x-4">
@@ -73,34 +74,7 @@ const MapToolbar = ({ onShowLocation ,onTileLayerChange }) => {
                     <li onClick={(onShowLocation)} className="p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
                         Locate Me
                     </li>
-                    {/* <li>
-                        <Dropdown
-                            label="Enable Drawing"
-                            isOpen={openDropdown === 'Enable Drawing'}
-                            onToggle={() => toggleDropdown('Enable Drawing')}
-                        >
-                            <div className="p-2 flex flex-col">
-                                <button className="w-full text-left p-2 hover:bg-gray-200">Option 1</button>
-                                <button className="w-full text-left p-2 hover:bg-gray-200">Option 2</button>
-                            </div>
-                        </Dropdown>
-                    </li>
-
-                    <li>
-                        <Dropdown
-                            label="Undo"
-                            isOpen={openDropdown === 'Undo'}
-                            onToggle={() => toggleDropdown('Undo')}
-                        >
-                            <div className="p-2 flex flex-col">
-                                <button className="w-full text-left p-2 hover:bg-gray-200">Option 1</button>
-                                <button className="w-full text-left p-2 hover:bg-gray-200">Option 2</button>
-                            </div>
-                        </Dropdown>
-                    </li> */}
-
-
-                    {/* Add more Dropdown components similarly */}
+                     {/* Add more Dropdown components similarly */}
                 </ul>
             </div>
         </nav>
