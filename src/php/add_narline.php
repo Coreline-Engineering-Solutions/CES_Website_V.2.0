@@ -1,12 +1,36 @@
 <?php
 
+    // CORS SOLVER
+    // Allow from any origin
+    header("Access-Control-Allow-Origin: *");
+
+    // Allow specific HTTP methods
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+
+    // Allow specific headers
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+    // Handle preflight requests
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        http_response_code(200);
+        exit;
+    }
+
     include "connections.php";
 
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Retrieve POST data
-        $user_name = $_POST['user_name'] ?? null;
-        $line_data = $_POST['line_data'] ?? null;
+
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+        // Decode the JSON data
+        $postData = json_decode($rawData, true);
+        $result='';
+
+
+        $user_name = $postData['user_name'] ?? null;
+        $line_data = $postData['line_data'] ?? null;
 
         // Validate input data
         if ($user_name && $line_data) {

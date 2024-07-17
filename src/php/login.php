@@ -51,7 +51,7 @@
                     user_login_session_start($pdo, $username, $cookie_exp, $last_page, $user_ip, $user_host, $user_port);
                     // temporary place for update since we know db must be active at this stage, might automate/timed script in the future
                     transfer_logs($pdo);
-                    echo json_encode(['result' => "_TRUE"]);
+                    echo json_encode(['result' => "_TRUE", 'username' =$user_data['username']]);
       
                 } else {
                     echo json_encode(['result' => "FALSE"]);

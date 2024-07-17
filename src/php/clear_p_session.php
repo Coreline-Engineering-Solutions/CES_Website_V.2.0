@@ -1,7 +1,7 @@
 <?php
 
     // CORS SOLVER
-    // Allow from any origin
+        // Allow from any origin
     header("Access-Control-Allow-Origin: *");
 
     // Allow specific HTTP methods
@@ -16,28 +16,23 @@
         exit;
     }
 
-    include "connections.php"
+    include "connections.php";
 
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        
+        // Get the raw POST data
         $rawData = file_get_contents('php://input');
+        // Decode the JSON data
         $postData = json_decode($rawData, true);
         $result='';
-
-        $user_name = $postData['user_name'] ?? null;
-        $point_data = $postData['point_data'] ?? null;
-
-        // Validate input data
-        if ($user_name && $point_data) {
+        $uname = $postData['user_name'];
             try {
                 // Prepare SQL statement
-                $sql = "INSERT INTO website.nar_point (username, point_as_text, active_session) VALUES (:user_name, :point_data, 'active')";
+                $sql = "UPDATE website.nar_point SET active_session = 'inactive' WHERE username = ':user_name'";
                 $stmt = $pdo->prepare($sql);
 
                 // Bind parameters
                 $stmt->bindParam(':user_name', $user_name);
-                $stmt->bindParam(':point_data', $point_data);
 
                 // Execute the statement
                 $stmt->execute();
@@ -48,10 +43,9 @@
                 // Handle SQL execution error
                 echo 'Error: ' . $e->getMessage();
             }
-        } else {
-            echo '_F';
-        }
     } else {
         echo '_F';
     }
+
+    
 ?>
