@@ -32,7 +32,7 @@
             $sql="SELECT hyperlink, narative FROM website.nar_line WHERE username=:value and active_session = 'active'";
             $stmnt=$pdo->prepare($sql);
             $stmnt->execute([':value'=>$uname]);
-            $data = $stmnt->fetch(PDO::FETCH_ASSOC);
+            $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);
         
             // Return the data as JSON
             header('Content-Type: application/json');

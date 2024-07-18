@@ -26,12 +26,12 @@
         // Decode the JSON data
         $postData = json_decode($rawData, true);
         $result='';
-        $uname = $postData['user_name'];
+        $uname = $postData['_USERNAME'];
 
         try {
-            $sql="SELECT hyperlink, narative FROM website.nar_point WHERE username=:value and active_session = 'active'";
+            $sql="SELECT job_reference, job_description FROM website.user_job_references WHERE username=:value;";
             $stmnt=$pdo->prepare($sql);
-            $stmnt->execute([':value'=>$uname]);
+            $stmnt->execute([':value'=> $uname]);
             $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);
         
             // Return the data as JSON

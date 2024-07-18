@@ -38,7 +38,6 @@
                 $user_data = return_user_field_data($pdo, "email", $email);
                 if ($user_data['active'] == 1) {
                     if (password_verify($password, $user_data['password'])) {
-                        echo 'password right';
                         session_start();
                         $_SESSION['username'] = $user_data['username'];
                         if ($remember == 'on') {
@@ -59,7 +58,6 @@
                         echo json_encode(['result' => "_TRUE", 'username' =>$user_data['username']]);
           
                     } else {
-                        echo 'password wrong';
                         echo json_encode(['result' => "FALSE"]);
                     }
                 } else {
