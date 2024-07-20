@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+
 
 const UserProfile = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const username = Cookies.get('username');
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);

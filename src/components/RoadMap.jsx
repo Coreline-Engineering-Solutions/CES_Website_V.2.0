@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { points } from '../constants';
 
 const Roadmap = () => {
     const [hoveredPoint, setHoveredPoint] = useState(null);

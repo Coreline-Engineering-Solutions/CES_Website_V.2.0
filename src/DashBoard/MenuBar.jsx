@@ -2,7 +2,7 @@ import React from 'react';
 import { DashboardServices } from '../constants';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-const MenuBar = ({ isMinimized, toggleMenuBar }) => {
+const MenuBar = ({ isMinimized, toggleMenuBar,_USERNAME }) => {
     return (
         <div className={` text-white py-4 mx-2 flex flex-col transition-all duration-300 ${isMinimized ? 'w-20' : 'w-64'}`}>
             <div className="flex items-center rounded-t-full bg-blue-900 justify-end p-2">

@@ -8,7 +8,7 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 // Dropdown component that handles its open/close state based on props
 const Dropdown = ({ label, isOpen, onToggle, children }) => {
     return (
-        <div className="relative inline-block">
+        <div className="sticky inline-block">
             <button
                 onClick={onToggle}
                 className="mr-4 p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl"

@@ -168,14 +168,13 @@ export const ServiceCarousel = [
 
 
 ];
+    // Define constants for options
+    export const radioMap = [
+        { id: 'S', value: '0', label: 'Single Sided' },
+        { id: 'DS', value: '1', label: 'Double Sided' },
+        { id: 'DSR', value: '2', label: 'Double Sided incl Road' },
+    ];
 
-export const points = [
-    { id: 1, imgURL: brainstorm, title: 'Brainstorming', description: ' Define Specification need required by the client. Specify the expected outcomes and benefits. Research and document relevant regulations and standards Obtain available data from client Identify potential risks and challenges.' },
-    { id: 2, imgURL: planning, title: 'Planning', description: ' Analyze data Clearly define the scope of work for the fiber design project. Include deliverables and exclusions Define quality standards for the fiber design Finalize Project Deliverables needed by the client' },
-    { id: 3, imgURL: execute, title: 'Launch and Execution', description: 'Define and finalize Commercials Allocate and introduce account manager and team to the client. Define and Finalize Communication Plan  Conduct team orientation and training.' },
-    { id: 4, imgURL: monitor, title: 'Monitoring and Control', description: 'Quality of deliverables Establish a process for identifying and resolving project constraints. Conduct regular quality inspections. Develop a protocol for handling changes to the project scope.' },
-    { id: 5, imgURL: Check, title: 'Project Commencement', description: 'Compile project documentation and ensure its accessible. Plan for a smooth handover to the client’s  Project Management Team Provide training to end-users  Establish ongoing support mechanisms. Conduct a project evaluation and gather feedback. Establish a lessons learned register for future projects.' },
-];
 
 export const experiences = [
     {

@@ -5,7 +5,7 @@ import { Loginbg } from '../assets/images';
 
 const Subscribe = () => {
   return (
-    <section id='contact' className=' flex flex-col w-full items-center gap-10 p-6' style={{ backgroundImage: `url(${Loginbg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+    <section id='contact' className=' flex flex-col w-full items-center gap-10 p-6' >
 
       <form className='w-full max-w-2xl bg-white flex flex-col gap-6 p-8 border border-gray-200 rounded-lg shadow-md'>
       <h3 className='text-4xl leading-[48px] font-palanquin font-bold text-center'>

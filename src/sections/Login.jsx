@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -38,9 +39,19 @@ const Login = () => {
                     'Content-Type': 'application/json'
                 }
             });
+            const Data = response.data;
 
-            const result = response.data;
-            setLoginResult(result);
+            //console.log('data = ' + Data); // Log the entire response for debugging
+
+            if (Data.result == "_TRUE") {
+
+                Cookies.set('username', Data.username, { expires: 1 });
+                navigate('/DashBoard', { state: { username: Data.username } })
+                setLoginResult('_TRUE');
+            } else {
+                setLoginResult('_FALSE');
+            }
+
         } catch (error) {
             console.error('Error logging in:', error);
             toast.error('An error occurred during login. Please try again.');
@@ -48,11 +59,11 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if (loginResult === '_True') {
+        if (loginResult === '_TRUE') {
             toast.success('Login successful!');
-            navigate('/DashBoard');
+
             setLoginResult(''); // Reset loginResult after successful login
-        } else if (loginResult === '_False') {
+        } else if (loginResult === '_FALSE') {
             toast.error('Login failed. Please check your credentials and try again.');
             setLoginResult(''); // Reset loginResult after displaying error message
         }
@@ -85,7 +96,7 @@ const Login = () => {
                 <div className="mt-4 text-center">
                     <a href="./reset_1.php" className="text-primary-600 hover:text-primary-800">Forgot password?</a>
                     <span className="mx-2 text-gray-400">|</span>
-                    <a href="./register.php" className="text-primary-600 hover:text-primary-800"><Link to="/Register">Register</Link></a>
+                    <Link to="/Register" className="text-primary-600 hover:text-primary-800">Register</Link>
                 </div>
             </div>
             <ToastContainer />
