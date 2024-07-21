@@ -8,13 +8,13 @@ import { EditControl } from "react-leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
 import MapToolbar from '../components/MapToolbar';
 import axios from 'axios';
-import { MapEventsHandler, Search, ProjectSelector } from '../components';
+import { MapEventsHandler, Search, ProjectSelector, NarrativeTable } from '../components';
 import { TILE_LAYERS } from './map_tile_provider';
 import { useLocation } from 'react-router-dom';
 
 const Narrative = () => {
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
-    const [lines, setLines] = useState([]);
+    const [projectLines, setProjectLines] = useState({});
     const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.OpenStreetMapUK);
     const UserLocation = useLocation();
     const username = UserLocation.state?.username || '';
@@ -26,8 +26,11 @@ const Narrative = () => {
     const _created = (e) => {
         if (e.layerType === 'polyline') {
             const { _latlngs } = e.layer;
-            const newLine = { project: selectedProject, coordinates: _latlngs };
-            setLines([...lines, newLine]);
+            const newLine = { project: selectedProject, coordinates: _latlngs, status: "Unsubmitted" };
+            setProjectLines(prevLines => ({
+                ...prevLines,
+                [selectedProject]: [...(prevLines[selectedProject] || []), newLine]
+            }));
         }
     };
 
@@ -61,10 +64,15 @@ const Narrative = () => {
     }, []);
 
     return (
-        <div id='narrative' className="h-full w-full">
+        <div id='narrative' className="h-full min-w-max">
             <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
-            <div className='flex h-full'>
-                <ProjectSelector lines={lines} setSelectedProject={setSelectedProject} />
+            <div className='flex h-full flex-row'>
+                <ProjectSelector className="w-1/3 h-full p-4 overflow-y-auto"
+                    projectLines={projectLines}
+                    setProjectLines={setProjectLines}
+                    setSelectedProject={setSelectedProject}
+                    selectedProject={selectedProject}
+                />
                 <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="z-10">
                     {selectedProject && (
                         <FeatureGroup>
@@ -83,12 +91,12 @@ const Narrative = () => {
                     )}
                     <TileLayer url={currentTileLayer.url} attribution={currentTileLayer.attribution} maxZoom={currentTileLayer.maxZoom} />
                     {location.loaded && !location.error && (
-                        <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker}>
-                        </Marker>
+                        <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker} />
                     )}
                     <MapEventsHandler />
                     <Search />
                 </MapContainer>
+                {/* <NarrativeTable/> */}
             </div>
         </div>
     );
