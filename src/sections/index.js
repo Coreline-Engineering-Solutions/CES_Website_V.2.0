@@ -7,7 +7,7 @@ import Subcribe from "../sections/Subcribe";
 import Footer from "./Footer";
 import Hero from "./Hero";
 import Expierence from "./Expierence";
-import MapTutorial from "./MapTutorial";
+import Narrative from "./Narrative";
 import Login from "./Login";
 import DashBoard from "../DashBoard/DashBoard";
 import Register from "./Register"
@@ -24,7 +24,7 @@ export {
   Footer,
   Hero,
   Expierence,
-  MapTutorial,
+  Narrative,
   Login,
   Register,
   Verification,

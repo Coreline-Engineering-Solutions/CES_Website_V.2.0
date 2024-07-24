@@ -20,6 +20,9 @@ import MapTileDropdown from "./MapTileDropdown";
 import MapLayers from "./MapLayers";
 import Search from "./Search";
 import ScrollToTopButton from "./ScrollToTopButton";
+import MapRadioButtons from "./RadioButtons";
+import ProjectSelector from "./MapProject";
+import NarrativeTable from "./NarrativeTable";
 
 export {
   Roadmap,
@@ -44,4 +47,7 @@ export {
   MapLayers,
   Search,
   ScrollToTopButton,
+  MapRadioButtons,
+  ProjectSelector,
+  NarrativeTable,
 };

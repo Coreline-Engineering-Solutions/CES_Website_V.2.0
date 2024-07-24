@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MapTutorial from './sections/MapTutorial.jsx';
+import Narrative from './sections/Narrative.jsx';
 import Login from './sections/Login.jsx';
 import DashBoard from './DashBoard/DashBoard.jsx';
 import Verification from './sections/Verification.jsx';
@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Router>
             <Routes>
                 <Route exact path="/" element={<App />} />
-                <Route exact path="/Narrative" element={<MapTutorial />} />
+                <Route exact path="/Narrative" element={<Narrative />} />
                 <Route exact path="/Login" element={<Login />} />
                 <Route exact path="/DashBoard" element={<DashBoard />} />
                 <Route exact path="/Register" element={<Register />} />

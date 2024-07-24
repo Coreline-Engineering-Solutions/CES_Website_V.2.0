@@ -3,11 +3,13 @@ import { ces} from '../assets/images';
 import { Signout } from '../assets/icons';
 import { useNavigate } from 'react-router-dom';
 import { MapToolbar } from '../components';
+import Cookies from 'js-cookie';
 
 
-const UserNavbar = () => {
+const UserNavbar = ({_USERNAME}) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
+    const username = _USERNAME;
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -50,8 +52,8 @@ const UserNavbar = () => {
                         className="text-center cursor-pointer"
                         onClick={toggleDropdown}
                     >
-                        <div className="text-xl text-black font-semibold">Admin</div>
-                        <div className="text-lg text-black ">User</div>
+                        <div className="text-xl text-black font-semibold">User:</div>
+                        <div className="text-lg text-black ">{username}</div>
                     </div>
 
                     {isDropdownOpen && (

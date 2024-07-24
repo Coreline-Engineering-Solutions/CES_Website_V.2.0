@@ -1,10 +1,12 @@
 import React from 'react';
 import { layers } from '../constants';
 import { FaDownload, FaMap, FaTrashAlt, FaLayerGroup } from 'react-icons/fa';
+import MapRadioButtons from './RadioButtons';
 
 const MapLayers = () => {
     return (
-        <div className="h-full w-1/5 bg-gray-100 p-4  border-2 overflow-y-auto"> 
+        <div className="h-full w-2/5 bg-gray-100 p-4  border-2 overflow-y-auto"> 
+        <MapRadioButtons/>
             <table className="min-w-full border-collapse">
                 <thead>
                     <tr className="bg-gray-200">
