@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import MapTileDropdown from './MapTileDropdown';
 import { TILE_LAYERS } from '../sections/map_tile_provider';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
