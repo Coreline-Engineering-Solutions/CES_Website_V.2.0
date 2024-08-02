@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, FeatureGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, FeatureGroup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { marker_map } from '../assets/icons';
@@ -8,66 +8,65 @@ import { EditControl } from "react-leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
 import MapToolbar from '../components/MapToolbar';
 import axios from 'axios';
-import { MapEventsHandler, Search, ProjectSelector, NarrativeTable } from '../components';
+import { MapEventsHandler, Search, ProjectSelector } from '../components';
 import { TILE_LAYERS } from './map_tile_provider';
 import { useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
-
-
 
 const Narrative = () => {
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
     const [projectLines, setProjectLines] = useState({});
     const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.OpenStreetMapUK);
+    const [isLoading, setIsLoading] = useState(true);
+    const [coordinates, setCoordinates] = useState([]); // State to hold coordinates
     const UserLocation = useLocation();
     const username = UserLocation.state?.username || '';
-    const _ZOOM_LEVEL = 13;
+    const _ZOOM_LEVEL = 16;
     const mapRef = useRef();
     const location = geolocation();
-    var [selectedProject, setSelectedProject] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
+    const [selectedProject, setSelectedProject] = useState('');
+    const selectedProjectRef = useRef(selectedProject);
+    const drawControlRef = useRef(null); // Reference for EditControl
 
-    // Debugging useEffect to log the selected project
     useEffect(() => {
-        console.log('Selected Project:', selectedProject);
+        selectedProjectRef.current = selectedProject;
+    }, [selectedProject]);
+
+    useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
         }, 3000);
     }, [selectedProject]);
 
     const handleAddNewLine = useCallback(async (newLine) => {
-        
-        if (!selectedProject) {
+        const currentProject = selectedProjectRef.current;
+
+        if (!currentProject) {
             toast.error("No project selected.");
             return;
         }
 
-        const timestamp = new Date().toISOString();
-        const lineWithTimestamp = {
-            ...newLine,
-            coordinates: newLine.coordinates || [],
-            timestamp
-        };
-        console.log('Current', selectedProject);
+        const { coordinates } = newLine;
+        const TIMESTAMP = new Date().toISOString();
+
         try {
             const response = await axios.post(
                 "https://www.corelineengineering.com/php/add_narline.php",
                 {
                     user_name: username,
-                    PROJECT: selectedProject,
-                    line_data: [lineWithTimestamp],
-                    options: '' // Replace with your actual option if necessary
+                    project: currentProject,
+                    line_data: coordinates,
+                    TIMESTAMP,
+                    options: ''
                 }
             );
 
             if (response.data === '_S') {
-                toast.success("Line submitted successfully!");
-
                 setProjectLines(prevLines => ({
                     ...prevLines,
-                    [selectedProject]: [
-                        ...(prevLines[selectedProject] || []),
-                        { ...lineWithTimestamp, status: "Submitted" }
+                    [currentProject]: [
+                        ...(prevLines[currentProject] || []),
+                        { coordinates, TIMESTAMP, status: "Submitted" }
                     ]
                 }));
             }
@@ -75,14 +74,13 @@ const Narrative = () => {
             toast.error("Error caught when submitting line");
             console.error("Error submitting line:", error);
         }
-    }, [selectedProject, username]);
+    }, [username]);
 
     const _created = (e) => {
-        
         if (e.layerType === 'polyline') {
             const { _latlngs } = e.layer;
             const newLine = { project: selectedProject, coordinates: _latlngs };
-          
+
             handleAddNewLine(newLine);
         }
     };
@@ -101,28 +99,9 @@ const Narrative = () => {
         setProjectLines(prevLines => ({
             ...prevLines,
             [selectedProject]: (prevLines[selectedProject] || []).map(line =>
-                editedLines.find(editedLine => editedLine === line.coordinates) ? 
-                { ...line, coordinates: editedLines.find(editedLine => editedLine === line.coordinates) } :
-                line
-            )
-        }));
-    };
-
-    const _deleted = (e) => {
-        const { layers } = e;
-        const deletedLines = [];
-
-        layers.eachLayer(layer => {
-            if (layer instanceof L.Polyline) {
-                const { _latlngs } = layer;
-                deletedLines.push(_latlngs);
-            }
-        });
-
-        setProjectLines(prevLines => ({
-            ...prevLines,
-            [selectedProject]: (prevLines[selectedProject] || []).filter(line =>
-                !deletedLines.find(deletedLine => deletedLine === line.coordinates)
+                editedLines.find(editedLine => editedLine === line.coordinates) ?
+                    { ...line, coordinates: editedLines.find(editedLine => editedLine === line.coordinates) } :
+                    line
             )
         }));
     };
@@ -147,24 +126,47 @@ const Narrative = () => {
             alert(location.error.message);
         }
     };
+
+    const LocateLine = (lineCoordinates) => {
+        if (lineCoordinates && lineCoordinates.length > 0) {
+            const map = mapRef.current;
+
+            if (map) {
+                const firstCoord = lineCoordinates[0];
+                map.flyTo([firstCoord.lat, firstCoord.lng], _ZOOM_LEVEL, { animate: true });
+            }
+        } else {
+            toast.error("No line coordinates available.");
+        }
+    };  
+
+    // const startDrawingPolyline = () => {
+    //     const drawControl = drawControlRef.current;
+    //     if (drawControl) {
+    //         drawControl._toolbars.draw._modes.polyline.handler.enable();
+    //     }
+    // };
+
     return (
-        <div id='narrative' className="h-full min-w-max">
-            <MapToolbar onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
+        <div id='narrative' className=" overflow-y-auto">
+            <MapToolbar _USERNAME= {username} onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer}  />
             <div className='flex h-screen flex-row'>
                 <ProjectSelector className="w-1/3 h-full p-4 overflow-y-auto"
                     projectLines={projectLines}
                     setProjectLines={setProjectLines}
                     setSelectedProject={setSelectedProject}
                     selectedProject={selectedProject}
+                    setCoordinates={setCoordinates} // Pass down the setter as a prop
+                    showLocation={LocateLine}
+                   
                 />
-                <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="z-10">
+                <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="z-10 ">
                     {selectedProject && (
                         <FeatureGroup>
                             <EditControl
-                                position="topright"
+                                ref={drawControlRef} // Attach the ref to EditControl
+                                position="topleft"
                                 onCreated={_created}
-                                onEdited={_edited}
-                                onDeleted={_deleted}
                                 draw={{
                                     rectangle: false,
                                     circle: false,
@@ -173,6 +175,10 @@ const Narrative = () => {
                                     polygon: false,
                                     polyline: true,
                                 }}
+                                edit={{
+                                    edit: false, // Disable editing of existing layers
+                                    remove: false // Disable deleting of existing layers
+                                }}
                             />
                         </FeatureGroup>
                     )}
@@ -180,11 +186,14 @@ const Narrative = () => {
                     {location.loaded && !location.error && (
                         <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker} />
                     )}
+                    {coordinates.map((line, index) => (
+                        <Polyline key={index} positions={line} />
+                    ))}
                     <MapEventsHandler />
                     <Search />
                 </MapContainer>
-                {/* <NarrativeTable/> */}
             </div>
+            <ToastContainer />
         </div>
     );
 };

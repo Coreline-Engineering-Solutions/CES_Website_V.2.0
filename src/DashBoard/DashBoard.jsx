@@ -8,7 +8,8 @@ import { useLocation } from 'react-router-dom';
 function DashBoard() {
 	const [isMinimized, setIsMinimized] = useState(false);
 	const location = useLocation();2
-	const username = location.state?.username || '';
+	const username = location.state?.username || "";
+	const username2 = location.state?.usernameNar || "";
 
 	const toggleMenuBar = () => {
 		setIsMinimized(!isMinimized);
@@ -20,7 +21,7 @@ function DashBoard() {
 				<UserNavbar _USERNAME={username} />
 			</div>
 			<div className="flex">
-				<MenuBar isMinimized={!isMinimized} toggleMenuBar={toggleMenuBar} _USERNAME={username} />
+				{/* <MenuBar isMinimized={!isMinimized} toggleMenuBar={toggleMenuBar} _USERNAME={username} /> */}
 				<Main isMinimized={!isMinimized} _USERNAME={username} />
 			</div>
 		</>

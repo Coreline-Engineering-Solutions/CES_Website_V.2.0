@@ -77,6 +77,15 @@ function Register() {
             });
 
             const result = response.data;
+
+            if (result === '_S') {
+                toast.success('Registration successful! Please check your email for a verification code.');
+                navigate('/Verification'); // Ensure this rouwte exists
+                setRegisterResult(''); // Reset RegisterResult after successful registration
+            } else {
+                toast.error('Registration failed. Please try again.');
+                setRegisterResult(''); // Reset RegisterResult after displaying error message
+            }
             setRegisterResult(result);
         } catch (error) {
             console.error('Error logging in:', error);
@@ -84,17 +93,6 @@ function Register() {
         }
 
     };
-
-    useEffect(() => {
-        if (registerResult === '_S') {
-            toast.success('Registration successful! Please check your email for a verification code.');
-            navigate('/Verification'); // Ensure this rouwte exists
-            setRegisterResult(''); // Reset RegisterResult after successful registration
-        } else {
-            toast.error('Registration failed. Please try again.');
-            setRegisterResult(''); // Reset RegisterResult after displaying error message
-        }
-    }, [registerResult, navigate]);
 
     return (
         <div
