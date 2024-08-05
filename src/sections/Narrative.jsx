@@ -21,7 +21,7 @@ const Narrative = () => {
     const [coordinates, setCoordinates] = useState([]); // State to hold coordinates
     const UserLocation = useLocation();
     const username = UserLocation.state?.username || '';
-    const _ZOOM_LEVEL = 16;
+    const _ZOOM_LEVEL = 18;
     const mapRef = useRef();
     const location = geolocation();
     const [selectedProject, setSelectedProject] = useState('');
@@ -72,7 +72,6 @@ const Narrative = () => {
             }
         } catch (error) {
             toast.error("Error caught when submitting line");
-            console.error("Error submitting line:", error);
         }
     }, [username]);
 
@@ -173,12 +172,16 @@ const Narrative = () => {
                                     circlemarker: false,
                                     marker: false,
                                     polygon: false,
-                                    polyline: true,
+                                    polyline: {
+                                        metric: false, // Use feet instead of kilometers
+                                    },
                                 }}
                                 edit={{
                                     edit: false, // Disable editing of existing layers
                                     remove: false // Disable deleting of existing layers
                                 }}
+                                
+                                
                             />
                         </FeatureGroup>
                     )}

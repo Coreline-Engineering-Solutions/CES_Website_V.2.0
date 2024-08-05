@@ -88,7 +88,6 @@ function Register() {
             }
             setRegisterResult(result);
         } catch (error) {
-            console.error('Error logging in:', error);
             toast.error('An error occurred during registration. Please try again.');
         }
 

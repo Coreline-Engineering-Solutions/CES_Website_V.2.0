@@ -44,7 +44,6 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
             );
             setExistingProjects(response.data);
         } catch (error) {
-            console.error("Error fetching projects:", error);
             if (!toast.isActive('fetchProjectsError')) {
                 toast.error("Error fetching projects", { toastId: 'fetchProjectsError' });
             }
@@ -72,7 +71,6 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 "https://www.corelineengineering.com/php/create_project.php",
                 submissionData
             );
-            console.log("Project created:", response.data);
             setProjectDetails(submissionData);
             fetchProjects();
             setSelectedProject(submissionData._PROJECT);
@@ -83,7 +81,6 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 toast.error("Failed to create project");
             }
         } catch (error) {
-            console.error("Error creating project:", error);
             if (!toast.isActive('createProjectError')) {
                 toast.error("Error creating project", { toastId: 'createProjectError' });
             }
@@ -125,7 +122,6 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 lng: coord.lng || coord.longitude
             }));
         } catch (error) {
-            console.error("Error parsing coordinates:", error.message);
             return [];
         }
     };
@@ -185,14 +181,12 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 }
             );
 
-            console.log(response);
 
             if (response.data === '_S') {
                 setNarrativeLines((prevLines) =>
                     prevLines.filter((prevLine) => prevLine.timestamp !== line.timestamp)
                 );
                 handleFetchData(); // Reload table
-                toast.success("Line deleted successfully", { toastId: 'deleteLineSuccess' });
             }
         } catch (error) {
             if (!toast.isActive('deleteLineError')) {
@@ -211,10 +205,9 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 }
             );
 
-            console.log(response);
 
             if (response.data === '_S') {
-                toast.success("Session cleared successfully", { toastId: 'clearSessionSuccess' });
+                // toast.error("Session cleared", { toastId: 'clearSessionSuccess' });
                 handleFetchData(); // Reload table
             }
         } catch (error) {
@@ -233,7 +226,7 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                 }
             );
 
-            console.log(response);
+
 
             if (response.data === '_S') {
                 toast.success("Downloading CSV", { toastId: 'downloadCSVSuccess' });
@@ -285,7 +278,6 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
     };
 
     const handleUpdate = (line) => {
-        console.log("Update line:", line);
     };
 
     const handleDelete = (line) => {
@@ -472,7 +464,7 @@ const ProjectSelector = ({ setProjectLines, setSelectedProject, selectedProject,
                                 Project Description: {projectDetails._DESCRIPTION || projectDetails.job_description}
                             </p>
                             <div className="flex flex-col space-y-4 mb-4 sm:mb-6">
-                                <label className="block text-lg font-medium text-gray-700">Project Status:</label>
+                                <label className="block text-lg font-medium text-gray-700">Locate Type:</label>
                                 <select
                                     id="downloadOption"
                                     value={selectedOption}
