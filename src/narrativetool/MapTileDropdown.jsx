@@ -1,5 +1,5 @@
 import React from 'react';
-import { TILE_LAYERS } from '../sections/map_tile_provider';
+import { TILE_LAYERS } from './map_tile_provider';
 
 const MapTileDropdown = ({ onChange }) => {
     const handleTileChange = (event) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { layers } from '../constants';
 import { FaDownload, FaMap, FaTrashAlt, FaLayerGroup } from 'react-icons/fa';
-import MapRadioButtons from './RadioButtons';
+import MapRadioButtons from '../components/RadioButtons';
 
 const MapLayers = () => {
     return (

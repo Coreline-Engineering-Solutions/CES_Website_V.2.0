@@ -7,10 +7,12 @@ import { useLocation } from 'react-router-dom';
 
 function DashBoard() {
 	const [isMinimized, setIsMinimized] = useState(false);
-	const location = useLocation();2
-	const username = location.state?.username || "";
-	const username2 = location.state?.usernameNar || "";
+	const location = useLocation();
+    const username = location.state?.username || location.state?.usernameNar || "";
 
+    console.log("Location state:", location.state);  // Log the state to debug
+    console.log("Retrieved username:", username);    // Log the final username value
+	
 	const toggleMenuBar = () => {
 		setIsMinimized(!isMinimized);
 	};

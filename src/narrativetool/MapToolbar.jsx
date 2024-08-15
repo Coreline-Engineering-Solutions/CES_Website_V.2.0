@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TILE_LAYERS } from '../sections/map_tile_provider';
+import { TILE_LAYERS } from './map_tile_provider';
 import { FiMenu } from 'react-icons/fi'; // Import hamburger icon
+import ToggleSwitch from '../components/ToggleSwitch';
 
 // Dropdown component that handles its open/close state based on props
 const Dropdown = ({ label, isOpen, onToggle, children }) => {
@@ -46,15 +47,15 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
                     <FiMenu size={24} />
                 </button>
                 <ul className={`flex-col md:flex-row md:flex md:space-x-4 ${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex absolute md:relative bg-[#00309e] top-16 left-0 right-0 md:top-auto md:left-auto md:right-auto p-4 md:p-0`}>
-                    {/* <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
-                        <Link to={{ pathname: '/DashBoard', state: { usernameNar: _USERNAME } }}>DashBoard</Link>
-                    </li> */}
+                    <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
+                        <Link to="/DashBoard" state={{ usernameNar: _USERNAME }}>DashBoard</Link>
+                    </li>
                     <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl" onClick={onShowLocation}>
                         Locate Me
                     </li>
-                    {/* <li className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
-                        <Link to={{ pathname: '/DashBoard', state: { usernameNar: _USERNAME } }}>DashBoard</Link>
-                    </li> */}
+                    <li className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
+                        <Link to="/DashBoard" state={{ usernameNar: _USERNAME }}>DashBoard</Link>
+                    </li>
                     <li>
                         <Dropdown
                             label="Change Map Tile"
@@ -77,6 +78,7 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
                     <li onClick={onShowLocation} className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
                         Locate Me
                     </li>
+
                 </ul>
             </div>
         </nav>
