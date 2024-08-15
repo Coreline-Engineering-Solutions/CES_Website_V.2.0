@@ -25,15 +25,17 @@
         // Decode the JSON data
         $postData = json_decode($rawData, true);
         $result='';
-        $uname = $postData['user_name'];
+        $uname = $postData['USERNAME'];
+        $project = $postData['PROJECT'];
+
             try {
                 // Prepare SQL statement
-                $sql = "UPDATE website.nar_line SET active_session = 'inactive' WHERE username = ':user_name'";
+                $sql = "UPDATE website.nar_line SET active_session = 'inactive' WHERE username = :user_name and job_reference = :project ";
                 $stmt = $pdo->prepare($sql);
 
                 // Bind parameters
-                $stmt->bindParam(':user_name', $user_name);
-
+                $stmt->bindParam(':user_name', $uname);
+                $stmt->bindParam(':project', $project);
                 // Execute the statement
                 $stmt->execute();
 
