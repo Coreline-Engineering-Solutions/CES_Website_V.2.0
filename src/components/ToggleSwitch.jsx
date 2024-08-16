@@ -13,8 +13,8 @@ const ToggleSwitch = ({ onToggle }) => {
     };
 
     return (
-        <div className="flex items-center">
-            <label className="mr-4 text-white">Toggle Pin</label>
+        <div className="flex items-center py-4">
+            <label className="mr-4 ">Toggle Pins</label>
             <label className="flex items-center cursor-pointer">
                 <div className="relative">
                     <input
@@ -23,14 +23,14 @@ const ToggleSwitch = ({ onToggle }) => {
                         checked={isToggled}
                         onChange={handleToggle}
                     />
-                    <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                    <div className="w-10 h-4 bg-[#00309e] rounded-full shadow-inner"></div>
                     <div
                         className={`dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition ${
                             isToggled ? 'transform translate-x-full bg-blue-500' : ''
                         }`}
                     ></div>
                 </div>
-                <span className="ml-3 text-white">
+                <span className="ml-3">
                     {isToggled ? 'On' : 'Off'}
                 </span>
             </label>

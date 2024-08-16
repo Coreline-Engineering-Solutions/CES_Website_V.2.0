@@ -14,11 +14,6 @@ const ProjectSelection = ({
     selectedProject,
     handleFetchData,
 }) => {
-    const handleProjectSelect = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedProject(selectedValue);
-        handleFetchData(); // Fetch data for the selected project
-    };
 
     const handleOpenAndFetch = () => {
         handleOpenProject();
@@ -29,6 +24,13 @@ const ProjectSelection = ({
         CreateProject();
         handleFetchData(); // Fetch data when creating the project
     };
+    const handleProjectSelect = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedProject(selectedValue);
+        handleFetchData(); // Fetch data for the selected project 
+        handleOpenAndFetch()
+    };
+
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -85,12 +87,6 @@ const ProjectSelection = ({
                             </option>
                         ))}
                     </select>
-                    <button
-                        className="w-full bg-[#00309e] text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-200 mt-2"
-                        onClick={handleOpenAndFetch} // Use the new handleOpenAndFetch function
-                    >
-                        Open Project
-                    </button>
                 </div>
             )}
         </div>

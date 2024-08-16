@@ -1,6 +1,7 @@
 import React from "react";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaTrash} from "react-icons/fa";
 import { radioMap } from "../constants";
+import { ToggleSwitch } from "../components";
 
 const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, handleLocateTypeChange, handleLineNameChange, locateType, lineName }) => {
 
@@ -12,6 +13,8 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
                 <p className="text-sm text-gray-600">{projectDetails?.job_description}</p>
                 <div className="flex flex-col space-y-4 mt-4">
                     <div>
+
+                        <ToggleSwitch/>
                         <label className="block text-gray-700">Locate Type:</label>
                         <select
                             id="downloadOption"
@@ -42,6 +45,7 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
                             className="w-full bg-red-500 text-white py-2 sm:py-3 rounded-lg hover:bg-red-400 transition duration-200 flex items-center justify-center space-x-2"
                             onClick={handleClearSession}
                         >
+                               <FaTrash className="mx-2" />
                             Clear Session
                         </button>
                         <button

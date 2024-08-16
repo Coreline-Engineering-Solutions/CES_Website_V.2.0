@@ -33,9 +33,6 @@ const Narrative = () => {
     const [LocateTypes, setLocateTypes] = useState(''); // Initialize LocateTypes
     const [enablePinDrops, setEnablePinDrops] = useState(0); // State to manage pin drops toggle
 
-    console.log(LineNames)
-    console.log(LocateTypes)
-
     useEffect(() => {
         selectedProjectRef.current = selectedProject;
     }, [selectedProject]);
@@ -177,10 +174,14 @@ const Narrative = () => {
     const LocateLine = (lineCoordinates, index) => {
         if (lineCoordinates && lineCoordinates.length > 0) {
             const map = mapRef.current;
-            console.log(index)
             if (map) {
-                const firstCoord = lineCoordinates[0];
-                map.flyTo([firstCoord.lat, firstCoord.lng], _ZOOM_LEVEL, { animate: true });
+                // Calculate the midpoint of the line
+                const totalLat = lineCoordinates.reduce((sum, coord) => sum + coord.lat, 0);
+                const totalLng = lineCoordinates.reduce((sum, coord) => sum + coord.lng, 0);
+                const midpointLat = totalLat / lineCoordinates.length;
+                const midpointLng = totalLng / lineCoordinates.length;
+    
+                map.flyTo([midpointLat, midpointLng], _ZOOM_LEVEL, { animate: true });
                 setGlowingLineIndex(index); // Set the glowing line index
                 console.log('Glowing Line Index Set:', index);
             }
@@ -189,12 +190,8 @@ const Narrative = () => {
         }
     };
 
-    const handleToggle = (value) => {
-        setEnablePinDrops(value);
-    };
-
     return (
-        <div id='narrative' className="overflow-hidden h-screen">
+        <div id='narrative' className="overflow-hidden h-screen pt-20">
             <MapToolbar className="fixed top-0 left-0 right-0 z-50" _USERNAME={username} onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
             <div className='flex h-full'>
                 <ProjectMain className="w-1/3 h-full p-4 "
@@ -209,7 +206,7 @@ const Narrative = () => {
                     locateType={LocateTypes}  // Pass locateType value
                     lineName={LineNames}  // Pass lineName value
                 />
-                <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="flex-grow h-full">
+                <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="flex-grow h-full z-0">
                     {selectedProject && (
                         <FeatureGroup>
                             <EditControl
