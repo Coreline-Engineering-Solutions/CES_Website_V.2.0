@@ -28,16 +28,17 @@
         $result='';
         $uname = $postData['USERNAME'];
         $project = $postData['PROJECT'];
+        $timestamp = $postData['TIMESTAMP'];
 
         try {
-            $sql="SELECT line_as_text, hyperlink, narative, timestamp FROM website.nar_line WHERE username=:value AND active_session = 'active' AND job_reference = :project ";
+            $sql="DELETE FROM website.nar_line WHERE username = :value AND timestamp = :timestamp AND job_reference = :project ";
             $stmnt=$pdo->prepare($sql);
-            $stmnt->execute([':value' => $uname, ':project' => $project]);
-            $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);
+            $stmnt->execute([':value' => $uname, ':timestamp' => $timestamp ,':project' => $project]);
+            
         
             // Return the data as JSON
             header('Content-Type: application/json');
-            echo json_encode($data);
+            echo json_encode('_S');
         } catch(PDOException $e) {
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
