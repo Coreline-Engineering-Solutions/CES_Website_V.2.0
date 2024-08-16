@@ -13,16 +13,14 @@ import ChangingProgressProvider from "./ChangingProgressProvider";
 import ProgressCardCable from "./ProgressCardCable";
 import ProgressCardHouse from "./ProgressCardHouse";
 import Loader from "./WebLoader";
-import MapToolbar from "./MapToolbar";
+import MapToolbar from "../narrativetool/MapToolbar";
 import RedirectButton from "./RedirectButton";
-import MapEventsHandler from "./MapEventsHandler";
-import MapTileDropdown from "./MapTileDropdown";
-import MapLayers from "./MapLayers";
-import Search from "./Search";
+import MapEventsHandler from "../narrativetool/MapEventsHandler";
+import MapTileDropdown from "../narrativetool/MapTileDropdown";
+import Search from "../narrativetool/Search";
 import ScrollToTopButton from "./ScrollToTopButton";
-import MapRadioButtons from "./RadioButtons";
-import ProjectSelector from "./MapProject";
-import NarrativeTable from "./NarrativeTable";
+import ProjectSelector from "../narrativetool/MapProject";
+import ToggleSwitch from "./ToggleSwitch";
 
 export {
   Roadmap,
@@ -44,10 +42,8 @@ export {
   RedirectButton,
   MapEventsHandler,
   MapTileDropdown,
-  MapLayers,
   Search,
   ScrollToTopButton,
-  MapRadioButtons,
   ProjectSelector,
-  NarrativeTable,
+  ToggleSwitch,
 };

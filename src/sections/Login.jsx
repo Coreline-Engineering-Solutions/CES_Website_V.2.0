@@ -40,9 +40,6 @@ const Login = () => {
                 }
             });
             const Data = response.data;
-
-            //console.log('data = ' + Data); // Log the entire response for debugging
-
             if (Data.result == "_TRUE") {
 
                 Cookies.set('username', Data.username, { expires: 1 });
@@ -53,7 +50,6 @@ const Login = () => {
             }
 
         } catch (error) {
-            console.error('Error logging in:', error);
             toast.error('An error occurred during login. Please try again.');
         }
     };

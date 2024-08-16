@@ -7,7 +7,6 @@ import Subcribe from "../sections/Subcribe";
 import Footer from "./Footer";
 import Hero from "./Hero";
 import Expierence from "./Expierence";
-import Narrative from "./Narrative";
 import Login from "./Login";
 import DashBoard from "../DashBoard/DashBoard";
 import Register from "./Register"
@@ -16,17 +15,15 @@ import Verification from "./Verification";
 export {
   DashBoard,
   Navbar,
-  AboutUs,
-  Services,
   OurServices,
   Managers,
   Subcribe,
   Footer,
   Hero,
-  Expierence,
-  Narrative,
   Login,
   Register,
   Verification,
-
+  AboutUs,
+  Expierence,
+  Services,
 };

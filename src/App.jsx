@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, AboutUs, Services, OurServices, Managers, Subcribe, Footer, Hero, Expierence } from './sections';
+import { Navbar, AboutUs, Services, OurServices, Managers, Subcribe, Footer, Hero, Expierence,Login } from './sections';
 import { Loader, ScrollToTopButton } from './components';
 import { ces, Loginbg } from './assets/images';
 
@@ -21,7 +21,8 @@ function App() {
             ) : (
                 <>
                     <main >
-                        <Navbar />
+                    <Login />
+                        {/* <Navbar />
                         <section>
                             <Hero />
                         </section>
@@ -43,7 +44,7 @@ function App() {
                         <section className="padding-x bg-slate-950 sm:py-32 py-16 w-full">
                             <Footer />
                         </section>
-                        <ScrollToTopButton/>
+                        <ScrollToTopButton/> */}
                     </main>
                 </>
             )}

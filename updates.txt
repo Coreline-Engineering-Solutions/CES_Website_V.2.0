@@ -1,0 +1,43 @@
+Navbar not scrollable/fix screen size to fit 2
+Navbar leaving screen when scrolling down
+
+Pin when searching 
+Pin for location 
+ -Turn on and off
+
+Dashboard button and fix 
+
+Change bar of project selector to be resizable 
+
+Textbox for name for line 
+
+Copy to clipboard narrative 
+Auto close- narrative when clicking outside the box 
+
+Glowing button when locating line 
+
+Fix open project problem- onselect change 
+
+Buffer mecanic for hyperlink fetching
+
+Forgot Password- Stay logged in fix and update
+
+max length for line narrative
+
+Gustav Session:
+  
+Name in project details and also replace Timestamp
+On narrative click, copy and close when ext 
+Bounding box for line zoom to
+Add flash to line when zoom to
+Edit still needs to added
+on text change project 
+ADD max length column box and limit line lentgh
+Show line in progress and toastie 
+Stay logged in
+ 
+Account buttons still to be modified
+ 
+Tiaan, remove text and narative column
+ 
+Forgot password to be tested
