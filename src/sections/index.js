@@ -11,6 +11,8 @@ import Login from "./Login";
 import DashBoard from "../DashBoard/DashBoard";
 import Register from "./Register"
 import Verification from "./Verification";
+import VerifyEmail from "./VerifyEmail";
+import PassReset from "./PasswordReset";
 
 export {
   DashBoard,
@@ -26,4 +28,6 @@ export {
   AboutUs,
   Expierence,
   Services,
+  VerifyEmail,
+  PassReset,
 };

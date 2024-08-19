@@ -12,25 +12,18 @@ const ProjectSelection = ({
     CreateProject,
     handleOpenProject,
     selectedProject,
-    handleFetchData,
 }) => {
-
-    const handleOpenAndFetch = () => {
-        handleOpenProject();
-        handleFetchData(); // Fetch data when opening the project
-    };
 
     const handleCreateAndFetch = () => {
         CreateProject();
-        handleFetchData(); // Fetch data when creating the project
+        handleOpenProject();
     };
+
     const handleProjectSelect = (event) => {
         const selectedValue = event.target.value;
         setSelectedProject(selectedValue);
-        handleFetchData(); // Fetch data for the selected project 
-        handleOpenAndFetch()
+        handleOpenProject();
     };
-
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -67,7 +60,7 @@ const ProjectSelection = ({
                     />
                     <button
                         className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-500 transition duration-200 mt-2"
-                        onClick={handleCreateAndFetch} // Use the new handleCreateAndFetch function
+                        onClick={handleCreateAndFetch}
                     >
                         Create Project
                     </button>
@@ -77,8 +70,7 @@ const ProjectSelection = ({
                 <div className="w-full mb-4">
                     <select
                         className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                        value={selectedProject}
-                        onChange={handleProjectSelect} // Use the new handleProjectSelect function
+                        onChange={handleProjectSelect}
                     >
                         <option value="">Select a project</option>
                         {existingProjects.map((project) => (

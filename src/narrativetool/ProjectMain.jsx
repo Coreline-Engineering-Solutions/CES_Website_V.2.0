@@ -11,12 +11,12 @@ import Modal from "./ProjectModal";
 import { ces, Loginbg } from '../assets/images';
 import Narrative from "./Narrative";
 
-const ProjectMain = ({ setSelectedProject, selectedProject, setCoordinates, LocateLine, setLocateTypes, setLineNames }) => {
+const ProjectMain = ({ setSelectedProject , selectedProject, setCoordinates, LocateLine, setLocateTypes, setLineNames,onDataUpdate,handleFetchData   }) => {
     const [selection, setSelection] = useState("");
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [existingProjects, setExistingProjects] = useState([]);
-    const [projectDetails, setProjectDetails] = useState(null);
+    const [projectDetails, setProjectDetails] = useState("");
     const [narrativeLines, setNarrativeLines] = useState([]); // Lines fetched from the database
     const [newLines, setNewLines] = useState([]); // Newly drawn lines
     const location = useLocation();
@@ -53,15 +53,13 @@ const ProjectMain = ({ setSelectedProject, selectedProject, setCoordinates, Loca
 
     useEffect(() => {
         if (selectedProject) {
-            const interval = setInterval(handleFetchData, 10000);
-            return () => clearInterval(interval);
+            console.log("Fetching data for project:", selectedProject);
+            handleFetchData(selectedProject);
+            setActiveTab("details"); // Automatically switch to the details tab
+    
         }
-        setLocateTypes(locateType);
-        setLineNames(lineName);
-
-
         fetchProjects();
-    }, [selectedProject, username,locateType, lineName, setLocateTypes, setLineNames]);
+    }, [selectedProject]);
 
     const fetchProjects = async () => {
         try {
@@ -104,48 +102,24 @@ const ProjectMain = ({ setSelectedProject, selectedProject, setCoordinates, Loca
         }
     };
 
-    const handleOpenProject = () => {
+    const handleOpenProject = (projectReference) => {
+        console.log('Received projectReference:', projectReference);
+        console.log('Existing projects:', existingProjects);
+    
         const project = existingProjects.find(
-            (p) => p.job_reference === selectedProject
+            (p) => p.job_reference === projectReference
         );
+    
         if (project) {
             setProjectDetails(project);
+            setSelectedProject(projectReference);
             setActiveTab("details");
             setLocateType(project.locateType || ""); // Adjust this based on your project data structure
             setLineName(project.lineName || "");     // Adjust this based on your project data structure
-    
+        } else {
+            console.error('Project not found for reference:', projectReference);
         }
     };
-
-    const parseCoordinates = (lineAsText) => {
-        try {
-            if (!lineAsText) {
-                throw new Error("Line text is null or undefined");
-            }
-            let parsed;
-            if (typeof lineAsText === 'string') {
-                try {
-                    parsed = JSON.parse(lineAsText);
-                } catch (jsonError) {
-                    throw new Error("Line text is not a valid JSON string");
-                }
-            } else {
-                parsed = lineAsText;
-            }
-
-            if (!Array.isArray(parsed)) {
-                throw new Error("Parsed line text is not an array");
-            }
-
-            return parsed.map(coord => ({
-                lat: coord.lat || coord.latitude,
-                lng: coord.lng || coord.longitude
-            }));
-        } catch (error) {
-            return [];
-        }
-    };
-
     const handleOpenNarrative = (narrative) => {
         setModalContent(narrative);
         setShowModal(true);
@@ -154,40 +128,6 @@ const ProjectMain = ({ setSelectedProject, selectedProject, setCoordinates, Loca
     const handleCloseModal = () => {
         setShowModal(false);
         setModalContent("");
-    };
-
-    const handleFetchData = async () => {
-        try {
-            const response = await axios.post(
-                "https://www.corelineengineering.com/php/nar_l_checks.php",
-                {
-                    USERNAME: username,
-                    PROJECT: selectedProject,
-                }
-            );
-            if (Array.isArray(response.data)) {
-                const fetchedLines = response.data.map(line => ({
-                    ...line,
-                    coordinates: parseCoordinates(line.line_as_text),
-                }));
-
-                setNarrativeLines(prevLines => [
-                    ...fetchedLines,
-                    ...newLines
-                ]);
-
-                const coordinates = fetchedLines.map(line => line.coordinates || []);
-                setCoordinates(coordinates);
-            } else {
-                if (!toast.isActive('fetchDataFormatError')) {
-                    toast.error("Fetched data is not in the expected format.", { toastId: 'fetchDataFormatError' });
-                }
-            }
-        } catch (error) {
-            if (!toast.isActive('fetchDataError')) {
-                toast.error("Error caught when fetching data", { toastId: 'fetchDataError' });
-            }
-        }
     };
 
     const handleDeleteLine = async (line) => {

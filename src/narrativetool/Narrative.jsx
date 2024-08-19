@@ -29,8 +29,6 @@ const Narrative = () => {
     const location = geolocation();
     const [selectedProject, setSelectedProject] = useState('');
     const selectedProjectRef = useRef(selectedProject);
-    const [LineNames, setLineNames] = useState(''); // Initialize LineNames
-    const [LocateTypes, setLocateTypes] = useState(''); // Initialize LocateTypes
     const [enablePinDrops, setEnablePinDrops] = useState(0); // State to manage pin drops toggle
 
     useEffect(() => {
@@ -43,82 +41,6 @@ const Narrative = () => {
         }, 3000);
     }, [selectedProject]);
 
-    const handleFetchData = async () => {
-        try {
-            const response = await axios.post(
-                "https://www.corelineengineering.com/php/nar_l_checks.php",
-                {
-                    USERNAME: username,
-                    PROJECT: selectedProject,
-                }
-            );
-            if (Array.isArray(response.data)) {
-                const fetchedLines = response.data.map(line => ({
-                    ...line,
-                    coordinates: parseCoordinates(line.line_as_text),
-                }));
-
-                setProjectLines(prevLines => ({
-                    ...prevLines,
-                    [selectedProject]: [
-                        ...(prevLines[selectedProject] || []),
-                        ...fetchedLines,
-                    ],
-                }));
-
-                const coordinates = fetchedLines.map(line => line.coordinates || []);
-                setCoordinates(coordinates);
-            } else {
-                if (!toast.isActive('fetchDataFormatError')) {
-                    toast.error("Fetched data is not in the expected format.", { toastId: 'fetchDataFormatError' });
-                }
-            }
-        } catch (error) {
-            if (!toast.isActive('fetchDataError')) {
-                toast.error("Error caught when fetching data", { toastId: 'fetchDataError' });
-            }
-        }
-    };
-
-
-    const handleAddNewLine = useCallback(async (newLine) => {
-        const currentProject = selectedProjectRef.current;
-        if (!currentProject) {
-            toast.error("No project selected.");
-            return;
-        }
-
-        const { coordinates } = newLine;
-        const TIMESTAMP = new Date().toISOString();
-
-        try {
-            const response = await axios.post(
-                "https://www.corelineengineering.com/php/add_narline.php",
-                {
-                    user_name: username,
-                    project: currentProject,
-                    line_data: coordinates,
-                    TIMESTAMP,
-                    options: LocateTypes,
-                    line_name: LineNames, // Include line name
-                }
-            );
-
-            if (response.data === '_S') {
-                handleFetchData();
-                setProjectLines(prevLines => ({
-                    ...prevLines,
-                    [currentProject]: [
-                        ...(prevLines[currentProject] || []),
-                        { coordinates, TIMESTAMP, status: "Submitted" }
-                    ]
-                }));
-                setCoordinates(prevCoordinates => [...prevCoordinates, coordinates]);
-            }
-        } catch (error) {
-            toast.error("Error caught when submitting line");
-        }
-    }, [username, LocateTypes, LineNames]);
 
     const _created = (e) => {
         if (e.layerType === 'polyline') {
@@ -191,21 +113,8 @@ const Narrative = () => {
     };
 
     return (
-        <div id='narrative' className="overflow-hidden h-screen pt-20">
-            <MapToolbar className="fixed top-0 left-0 right-0 z-50" _USERNAME={username} onShowLocation={showMyLocation} onTileLayerChange={setCurrentTileLayer} />
+        <div id='narrative' className="overflow-hidden h-screen ">
             <div className='flex h-full'>
-                <ProjectMain className="w-1/3 h-full p-4 "
-                    projectLines={projectLines}
-                    setProjectLines={setProjectLines}
-                    setSelectedProject={setSelectedProject}
-                    selectedProject={selectedProject}
-                    setCoordinates={setCoordinates} // Pass down the setter as a prop
-                    LocateLine={LocateLine}
-                    setLocateTypes={setLocateTypes} // Pass the state setter to ProjectMain
-                    setLineNames={setLineNames} // Pass the state setter to ProjectMain
-                    locateType={LocateTypes}  // Pass locateType value
-                    lineName={LineNames}  // Pass lineName value
-                />
                 <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="flex-grow h-full z-0">
                     {selectedProject && (
                         <FeatureGroup>
