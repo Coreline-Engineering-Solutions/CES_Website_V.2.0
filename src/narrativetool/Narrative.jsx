@@ -6,24 +6,15 @@ import { marker_map } from '../assets/icons';
 import { geolocation } from '../hooks';
 import { EditControl } from "react-leaflet-draw";
 import 'leaflet-draw/dist/leaflet.draw.css';
-import MapToolbar from './MapToolbar';
-import axios from 'axios';
-import { MapEventsHandler, Search, ProjectSelector, ToggleSwitch } from '../components';
-import { TILE_LAYERS } from './map_tile_provider';
 import { useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import ProjectMain from './ProjectMain';
+import { TILE_LAYERS } from './map_tile_provider';
 
-const Narrative = () => {
+const Narrative = ({ handleAddNewLine, projectLines, coordinates, glowingLineIndex, setGlowingLineIndex,isDrawingEnabled  }) => {
     const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
-    const [projectLines, setProjectLines] = useState({});
     const [currentTileLayer, setCurrentTileLayer] = useState(TILE_LAYERS.OpenStreetMapUK);
-    const [isLoading, setIsLoading] = useState(true);
-    const [coordinates, setCoordinates] = useState([]); // State to hold coordinates
-    const [glowingLineIndex, setGlowingLineIndex] = useState(null); // State to track the glowing line index
     const UserLocation = useLocation();
-    const username = UserLocation.state?.username || '';
     const _ZOOM_LEVEL = 18;
     const mapRef = useRef();
     const location = geolocation();
@@ -35,18 +26,16 @@ const Narrative = () => {
         selectedProjectRef.current = selectedProject;
     }, [selectedProject]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 3000);
-    }, [selectedProject]);
-
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setIsLoading(false);
+    //     }, 3000);
+    // }, [selectedProject]);
 
     const _created = (e) => {
         if (e.layerType === 'polyline') {
             const { _latlngs } = e.layer;
             const newLine = { project: selectedProject, coordinates: _latlngs };
-
             handleAddNewLine(newLine);
         }
     };
@@ -102,7 +91,7 @@ const Narrative = () => {
                 const totalLng = lineCoordinates.reduce((sum, coord) => sum + coord.lng, 0);
                 const midpointLat = totalLat / lineCoordinates.length;
                 const midpointLng = totalLng / lineCoordinates.length;
-    
+
                 map.flyTo([midpointLat, midpointLng], _ZOOM_LEVEL, { animate: true });
                 setGlowingLineIndex(index); // Set the glowing line index
                 console.log('Glowing Line Index Set:', index);
@@ -116,7 +105,7 @@ const Narrative = () => {
         <div id='narrative' className="overflow-hidden h-screen ">
             <div className='flex h-full'>
                 <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="flex-grow h-full z-0">
-                    {selectedProject && (
+                    {selectedProject && isDrawingEnabled && ( // Only show drawing tools if enabled
                         <FeatureGroup>
                             <EditControl
                                 position="topleft"
@@ -132,7 +121,7 @@ const Narrative = () => {
                                     },
                                 }}
                                 edit={{
-                                    edit: false, // Disable editing of existing layers
+                                    edit: true, // Enable editing of existing layers
                                     remove: false // Disable deleting of existing layers
                                 }}
                             />
@@ -142,16 +131,13 @@ const Narrative = () => {
                     {location.loaded && !location.error && (
                         <Marker position={[location.coordinates.lat, location.coordinates.lng]} icon={marker} />
                     )}
-                    
                     {coordinates.map((line, index) => (
                         <Polyline
                             key={index}
                             positions={line}
-                            pathOptions={index === glowingLineIndex ? { color: 'red',weight:4 } : { color: 'blue', opacity:0.7}}
+                            pathOptions={index === glowingLineIndex ? { color: 'red', weight: 4 } : { color: 'blue', opacity: 0.7 }}
                         />
                     ))}
-                    <MapEventsHandler />
-                    <Search enablePinDrops={enablePinDrops === 1} />
                 </MapContainer>
             </div>
             <ToastContainer />

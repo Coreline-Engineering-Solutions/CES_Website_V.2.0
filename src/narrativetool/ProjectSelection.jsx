@@ -16,13 +16,12 @@ const ProjectSelection = ({
 
     const handleCreateAndFetch = () => {
         CreateProject();
-        handleOpenProject();
     };
 
     const handleProjectSelect = (event) => {
         const selectedValue = event.target.value;
         setSelectedProject(selectedValue);
-        handleOpenProject();
+        handleOpenProject(selectedValue);
     };
 
     return (
