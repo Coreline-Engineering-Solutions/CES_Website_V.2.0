@@ -9,10 +9,6 @@ function DashBoard() {
 	const [isMinimized, setIsMinimized] = useState(false);
 	const location = useLocation();
     const username = location.state?.username || location.state?.usernameNar || "";
-
-    console.log("Location state:", location.state);  // Log the state to debug
-    console.log("Retrieved username:", username);    // Log the final username value
-	
 	const toggleMenuBar = () => {
 		setIsMinimized(!isMinimized);
 	};

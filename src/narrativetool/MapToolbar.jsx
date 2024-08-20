@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TILE_LAYERS } from './map_tile_provider';
 import { FiMenu } from 'react-icons/fi'; // Import hamburger icon
-import ToggleSwitch from '../components/ToggleSwitch';
 
 // Dropdown component that handles its open/close state based on props
 const Dropdown = ({ label, isOpen, onToggle, children }) => {
@@ -15,7 +14,7 @@ const Dropdown = ({ label, isOpen, onToggle, children }) => {
                 {label}
             </button>
             {isOpen && (
-                <div className="absolute bg-white shadow-md rounded mt-2 w-48 z-50">
+                <div className="absolute bg-white shadow-md rounded mt-2 w-48 z-50"> {/* Ensure high z-index */}
                     {children}
                 </div>
             )}
@@ -37,7 +36,7 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
     };
 
     return (
-        <nav className="bg-[#00309e] flex justify-between items-center px-4 py-2 z-50 relative">
+        <nav className="bg-[#00309e] flex justify-between items-center px-4 py-4 z-50 fixed top-0 left-0 right-0">
             <div className="text-white text-lg font-semibold">Narrative Mapping Tool</div>
             <div className="space-x-6 flex items-center">
                 <button
@@ -78,7 +77,6 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
                     <li onClick={onShowLocation} className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
                         Locate Me
                     </li>
-
                 </ul>
             </div>
         </nav>

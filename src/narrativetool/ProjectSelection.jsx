@@ -12,22 +12,16 @@ const ProjectSelection = ({
     CreateProject,
     handleOpenProject,
     selectedProject,
-    handleFetchData,
 }) => {
-    const handleProjectSelect = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedProject(selectedValue);
-        handleFetchData(); // Fetch data for the selected project
-    };
-
-    const handleOpenAndFetch = () => {
-        handleOpenProject();
-        handleFetchData(); // Fetch data when opening the project
-    };
 
     const handleCreateAndFetch = () => {
         CreateProject();
-        handleFetchData(); // Fetch data when creating the project
+    };
+
+    const handleProjectSelect = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedProject(selectedValue);
+        handleOpenProject(selectedValue);
     };
 
     return (
@@ -65,7 +59,7 @@ const ProjectSelection = ({
                     />
                     <button
                         className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-500 transition duration-200 mt-2"
-                        onClick={handleCreateAndFetch} // Use the new handleCreateAndFetch function
+                        onClick={handleCreateAndFetch}
                     >
                         Create Project
                     </button>
@@ -75,8 +69,7 @@ const ProjectSelection = ({
                 <div className="w-full mb-4">
                     <select
                         className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                        value={selectedProject}
-                        onChange={handleProjectSelect} // Use the new handleProjectSelect function
+                        onChange={handleProjectSelect}
                     >
                         <option value="">Select a project</option>
                         {existingProjects.map((project) => (
@@ -85,12 +78,6 @@ const ProjectSelection = ({
                             </option>
                         ))}
                     </select>
-                    <button
-                        className="w-full bg-[#00309e] text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-200 mt-2"
-                        onClick={handleOpenAndFetch} // Use the new handleOpenAndFetch function
-                    >
-                        Open Project
-                    </button>
                 </div>
             )}
         </div>

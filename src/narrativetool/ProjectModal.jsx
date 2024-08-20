@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useEffect, useRef } from "react";
+import { FaTimes, FaSpinner } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { FaSpinner } from "react-icons/fa";
 
 const Modal = ({ showModal, handleCloseModal, modalContent }) => {
+    const modalRef = useRef(null);
+
     useEffect(() => {
         if (showModal && modalContent) {
             navigator.clipboard.writeText(modalContent)
@@ -17,12 +18,34 @@ const Modal = ({ showModal, handleCloseModal, modalContent }) => {
         }
     }, [showModal, modalContent]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                handleCloseModal();
+            }
+        };
+
+        if (showModal) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showModal, handleCloseModal]);
+
     if (!showModal) return null;
 
     return (
         <>
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style={{ zIndex: 9999 }}>
-                <div className="bg-white rounded-lg p-5 shadow-lg w-3/4 max-w-lg">
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div
+                    ref={modalRef}
+                    className="bg-white rounded-lg p-5 shadow-lg w-3/4 max-w-lg"
+                    style={{ zIndex: 9999 }}
+                >
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Narrative</h2>
                         <button onClick={handleCloseModal}>
