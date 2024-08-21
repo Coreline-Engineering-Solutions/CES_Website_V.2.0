@@ -30,12 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $user_name = $postData['user_name'] ?? null;
     $line_data = $postData['line_data'] ?? null;
-    $option = $postData['options'] ?? 0;
+    $option = $postData['LOCATE_TYPE'] ?? 0;
     if ($option === '') {
         $option = 0;
     }
     $project = $postData['project'] ?? null;
     $timestamp = $postData['TIMESTAMP'] ?? null;
+    $line_name = $postData['LINE_NAME'] ?? null;
 
     // Validate input data
     if ($user_name && $line_data) {
@@ -43,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Check if line_data is now an array
             if (is_array($line_data)) {
                 // Prepare SQL statement
-                $sql = "INSERT INTO website.nar_line (username, line_as_text, options, job_reference, timestamp, active_session) VALUES (:user_name, :line_data, :option, :project, :timestamp, 'active')";
+                $sql = "INSERT INTO website.nar_line (username, line_as_text, options, job_reference, timestamp, line_name, active_session) VALUES (:user_name, :line_data, :option, :project, :timestamp, :line_name, 'active')";
                 $stmt = $pdo->prepare($sql);
 
                 // Convert the line_data array to JSON string
@@ -55,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindParam(':option', $option, PDO::PARAM_INT);
                 $stmt->bindParam(':project', $project);
                 $stmt->bindParam(':timestamp', $timestamp);
+                $stmt->bindParam(':line_name', $line_name);
 
                 // Execute the statement
                 $stmt->execute();

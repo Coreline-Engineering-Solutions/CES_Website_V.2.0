@@ -30,7 +30,7 @@
         $project = $postData['PROJECT'];
 
         try {
-            $sql="SELECT line_as_text, hyperlink, narative, timestamp FROM website.nar_line WHERE username=:value AND active_session = 'active' AND job_reference = :project ";
+            $sql="SELECT line_as_text, hyperlink, narative, timestamp, line_name, options  FROM website.nar_line WHERE username=:value AND active_session = 'active' AND job_reference = :project ";
             $stmnt=$pdo->prepare($sql);
             $stmnt->execute([':value' => $uname, ':project' => $project]);
             $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);
