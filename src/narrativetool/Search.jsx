@@ -26,12 +26,7 @@ const Search = ({ enablePinDrops }) => {
 
         map.addControl(searchControl);
 
-        if (enablePinDrops) {
-            map.on('geosearch/showlocation', handleLocationShow);
-        } else {
-            map.off('geosearch/showlocation', handleLocationShow);
-        }
-
+        // Define the event handler function
         function handleLocationShow(result) {
             const { location } = result;
             if (marker) {
@@ -41,13 +36,30 @@ const Search = ({ enablePinDrops }) => {
             setMarker(newMarker); // Set new marker
         }
 
+        // Handle the visibility of the marker
+        if (marker) {
+            marker.setOpacity(enablePinDrops ? 1 : 0); // Set marker visibility based on toggle state
+        }
+
+        // Add event listener for showing location
+        map.on('geosearch/showlocation', handleLocationShow);
+
+        // Cleanup on component unmount
         return () => {
             map.removeControl(searchControl);
+            map.off('geosearch/showlocation', handleLocationShow); // Clean up the event listener
             if (marker) {
-                map.removeLayer(marker);
+                map.removeLayer(marker); // Remove any existing marker on component unmount
             }
         };
-    }, [map, marker, enablePinDrops]);
+    }, [map, marker]);
+
+    // Update marker visibility whenever enablePinDrops changes
+    useEffect(() => {
+        if (marker) {
+            marker.setOpacity(enablePinDrops ? 1 : 0); // Toggle marker visibility
+        }
+    }, [enablePinDrops, marker]);
 
     return null;
 };

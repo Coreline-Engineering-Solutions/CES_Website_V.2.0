@@ -8,7 +8,7 @@ const ToggleSwitch = ({ onToggle }) => {
         setIsToggled(newState);
         if (onToggle) {
             // Send 1 if toggled on, 0 if toggled off
-            onToggle(newState ? 1 : 0);
+            onToggle(newState ? 0 : 1);
         }
     };
 
@@ -31,7 +31,7 @@ const ToggleSwitch = ({ onToggle }) => {
                     ></div>
                 </div>
                 <span className="ml-3">
-                    {isToggled ? 'On' : 'Off'}
+                    {isToggled ? 'Off' : 'On'}
                 </span>
             </label>
         </div>

@@ -170,9 +170,9 @@ export const ServiceCarousel = [
 ];
     // Define constants for options
     export const radioMap = [
-        { id: 'S', value: '0', label: 'Single Sided' },
-        { id: 'DS', value: '1', label: 'Double Sided' },
-        { id: 'DSR', value: '2', label: 'Double Sided incl Road' },
+        { id: 'S', value: '1', label: 'Single Sided' },
+        { id: 'DS', value: '2', label: 'Double Sided' },
+        { id: 'DSR', value: '3', label: 'Double Sided incl Road' },
     ];
 
 

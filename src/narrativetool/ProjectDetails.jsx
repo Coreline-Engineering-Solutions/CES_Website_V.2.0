@@ -3,7 +3,17 @@ import { FaDownload, FaTrash} from "react-icons/fa";
 import { radioMap } from "../constants";
 import { ToggleSwitch } from "../components";
 
-const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, handleLocateTypeChange, handleLineNameChange, locateType, lineName }) => {
+const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, setLocateType, setLineName,lineName,locateType,onToggle }) => {
+
+    const handleLocateTypeChange = (event) => {
+        const locateType = event.target.value;
+		setLocateType(locateType);
+	};
+
+	const handleLineNameChange = (event) => {
+        const lineName = event.target.value;
+		setLineName(lineName);
+	};
 
     return (
         <div className="w-full">
@@ -14,11 +24,11 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
                 <div className="flex flex-col space-y-4 mt-4">
                     <div>
 
-                        <ToggleSwitch/>
+                        <ToggleSwitch onToggle={onToggle}/>
                         <label className="block text-gray-700">Locate Type:</label>
                         <select
                             id="downloadOption"
-                            value={locateType}  // Bind select value to locateType
+                            value= {locateType} // Bind select value to locateType
                             onChange={handleLocateTypeChange}
                             className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                         >
@@ -33,8 +43,8 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
                     <div>
                         <label className="block text-gray-700">Line Name:</label>
                         <input
-                            type="text"
-                            value={lineName}  // Bind input value to lineName
+                            
+                            value= {lineName}
                             className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                             placeholder="Enter line name"
                             onChange={handleLineNameChange}

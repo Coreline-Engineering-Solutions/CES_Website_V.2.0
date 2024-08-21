@@ -117,40 +117,8 @@ function PassReset() {
                     className="mx-auto w-full "
                     onSubmit={handleSubmit}
                 >
-                    <h2 className="text-center text-4xl mb-6">Register New Account</h2>
-                    <div className="mb-4">
-                        <input
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            className="form-control px-3 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email Address"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="form-control px-3 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <input
-                            type="email"
-                            name="email_confirm"
-                            placeholder="Confirm Email Address"
-                            value={formData.email_confirm}
-                            onChange={handleChange}
-                            className="form-control px-3 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            required
-                        />
-                    </div>
+                    <h2 className="text-center text-4xl mb-6">Reset Password</h2>
+
                     <div className="mb-4">
                         <input
                             type="password"
@@ -184,7 +152,7 @@ function PassReset() {
                         type="submit"
                         className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
                     >
-                        Register
+                        Confirm Password
                     </button>
                     <p className="mt-5 mb-1 text-gray-500 text-center">
                         © Coreline Engineering Solutions (PTY) Ltd

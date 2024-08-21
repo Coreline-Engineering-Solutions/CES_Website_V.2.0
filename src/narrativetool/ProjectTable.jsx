@@ -1,5 +1,11 @@
 import React from "react";
-import { FaTrashAlt, FaSearchLocation, FaComment, FaLink,FaSpinner } from "react-icons/fa";
+import { FaTrashAlt, FaSearchLocation, FaComment, FaLink, FaSpinner } from "react-icons/fa";
+
+const LOCATE_TYPE_LABELS = {
+    '1': 'Single Sided',
+    '2': 'Double Sided',
+    '3': 'Double Sided incl Road'
+};
 
 const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurrentPage, rowsPerPage, handleOpenNarrative, LocateLine }) => {
     const totalPages = Math.ceil(narrativeLines.length / rowsPerPage);
@@ -7,6 +13,7 @@ const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurren
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
     const handleLocateClick = (lineCoordinates) => {
         // Find the index of the line in the narrativeLines array
         const index = narrativeLines.findIndex(line => line.coordinates === lineCoordinates);
@@ -35,11 +42,12 @@ const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurren
                         .map((line, index) => (
                             <tr key={line.timestamp}>
                                 <td className="p-2 border border-gray-300">{index + 1}</td>
-                                <td className="p-2 border border-gray-300">{line.line_name}</td>
-                                <td className="p-2 border border-gray-300">{line.locate_type}</td>
-
+                                <td className="p-2 border border-gray-300">{line.line_name || 'No Name'}</td>
                                 <td className="p-2 border border-gray-300">
-                                {line.hyperlink ? (
+                                    {LOCATE_TYPE_LABELS[line.options] || 'Unknown'}
+                                </td>
+                                <td className="p-2 border border-gray-300">
+                                    {line.hyperlink ? (
                                         <a href={line.hyperlink} target="_blank" rel="noopener noreferrer">
                                             <FaLink className="text-[#00309e]" />
                                         </a>
