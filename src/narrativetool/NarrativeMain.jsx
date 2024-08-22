@@ -180,6 +180,7 @@ function NarrativeMain() {
     const latestLocateType = locateTypeRef.current;
     const latestLineName = lineNameRef.current;
 
+	
 		setIsDrawingEnabled(true);
 	
 		if (!currentProject) {

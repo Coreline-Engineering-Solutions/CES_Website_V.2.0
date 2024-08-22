@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { FaTrashAlt, FaSearchLocation, FaComment, FaLink, FaSpinner } from "react-icons/fa";
 
 const LOCATE_TYPE_LABELS = {
@@ -7,12 +8,18 @@ const LOCATE_TYPE_LABELS = {
     '3': 'Double Sided incl Road'
 };
 
-const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurrentPage, rowsPerPage, handleOpenNarrative, LocateLine }) => {
+const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurrentPage, rowsPerPage, handleOpenNarrative, LocateLine, handleFetchData}) => {
     const totalPages = Math.ceil(narrativeLines.length / rowsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
+    useEffect(() => {
+        // Fetch the latest data whenever the component mounts or currentPage changes
+        handleFetchData();
+    }, [handleFetchData, currentPage]);
+
 
     const handleLocateClick = (lineCoordinates) => {
         // Find the index of the line in the narrativeLines array
@@ -40,7 +47,7 @@ const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurren
                     {narrativeLines
                         .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
                         .map((line, index) => (
-                            <tr key={line.timestamp}>
+                            <tr key={line.timestamp}> {/* Ensure that each `tr` has a unique key */}
                                 <td className="p-2 border border-gray-300">{index + 1}</td>
                                 <td className="p-2 border border-gray-300">{line.line_name || 'No Name'}</td>
                                 <td className="p-2 border border-gray-300">

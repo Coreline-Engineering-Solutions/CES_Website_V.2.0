@@ -322,6 +322,7 @@ const ProjectMain = ({
 						rowsPerPage={rowsPerPage}
 						handleOpenNarrative={handleOpenNarrative}
 						LocateLine={LocateLine}
+						 handleFetchData={handleFetchData}
 					/>
 				)}
 			</div>

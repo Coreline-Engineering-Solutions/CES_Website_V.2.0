@@ -90,6 +90,7 @@ const Login = () => {
                     </button>
                 </form>
                 <div className="mt-4 text-center">
+                    
                 <Link to="/VerifyEmail" className="text-primary-600 hover:text-primary-800">Forgot Password</Link>
                     <span className="mx-2 text-gray-400">|</span>
                     <Link to="/Register" className="text-primary-600 hover:text-primary-800">Register</Link>

@@ -49,7 +49,7 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
                     <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
                         <Link to="/DashBoard" state={{ usernameNar: _USERNAME }}>DashBoard</Link>
                     </li>
-                    <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl" onClick={onShowLocation}>
+                    <li className="block md:hidden p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl cursor-pointer" onClick={onShowLocation}>
                         Locate Me
                     </li>
                     <li className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
@@ -74,7 +74,7 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
                             </div>
                         </Dropdown>
                     </li>
-                    <li onClick={onShowLocation} className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl">
+                    <li onClick={onShowLocation} className="hidden md:block p-4 hover:bg-[#6d7eff] hover:duration-300 text-white rounded-2xl cursor-pointer">
                         Locate Me
                     </li>
                 </ul>
