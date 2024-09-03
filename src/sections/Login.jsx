@@ -6,10 +6,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
     const navigate = useNavigate();
     const [loginResult, setLoginResult] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -40,30 +42,43 @@ const Login = () => {
                 }
             });
             const Data = response.data;
-            if (Data.result == "_TRUE") {
+            if (Data.result === "_TRUE") {
+                const cookieOptions = formData.remember
+                    ? { expires: 1 } // Cookie will expire in 7 days if "Stay logged in" is checked
+                    : {};
 
-                Cookies.set('username', Data.username, { expires: 1 });
-                navigate('/DashBoard', { state: { username: Data.username } })
+                Cookies.set('username', Data.username, cookieOptions);
+                navigate('/DashBoard', { state: { username: Data.username } });
                 setLoginResult('_TRUE');
             } else {
                 setLoginResult('_FALSE');
             }
-
         } catch (error) {
-            toast.error('An error occurred during login. Please try again.');
+            toast.error('An error occurred during login. Please try again.', { toastId: 'login-Error', containerId: 'login-toast-container' });
         }
     };
 
     useEffect(() => {
+        const username = Cookies.get('username');
+        if (username) {
+            navigate('/DashBoard', { state: { username } });
+        }
         if (loginResult === '_TRUE') {
             toast.success('Login successful!');
-
             setLoginResult(''); // Reset loginResult after successful login
         } else if (loginResult === '_FALSE') {
-            toast.error('Login failed. Please check your credentials and try again.');
+            toast.error('Login failed. Please check your credentials and try again.', { toastId: 'credit-Error', containerId: 'login-toast-container' });
             setLoginResult(''); // Reset loginResult after displaying error message
         }
     }, [loginResult, navigate]);
+
+    const handleMouseDown = () => {
+        setShowPassword(true);
+    };
+
+    const handleMouseUp = () => {
+        setShowPassword(false);
+    };
 
     return (
         <div id='login' className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-300 flex justify-center items-center" style={{ backgroundImage: `url(${Loginbg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
@@ -77,9 +92,27 @@ const Login = () => {
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
                         <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" required />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-4 relative">
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" required />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm pr-10"
+                                required
+                            />
+                            <div
+                                onMouseDown={handleMouseDown}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-500"
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </div>
+                        </div>
                     </div>
                     <div className="flex items-center mb-4">
                         <input type="checkbox" id="remember" name="remember" checked={formData.remember} onChange={handleChange} className="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded" />
@@ -90,13 +123,12 @@ const Login = () => {
                     </button>
                 </form>
                 <div className="mt-4 text-center">
-                    
-                <Link to="/VerifyEmail" className="text-primary-600 hover:text-primary-800">Forgot Password</Link>
+                    <Link to="/VerifyEmail" className="text-primary-600 hover:text-primary-800">Forgot Password</Link>
                     <span className="mx-2 text-gray-400">|</span>
                     <Link to="/Register" className="text-primary-600 hover:text-primary-800">Register</Link>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer containerId="login-toast-container" position="bottom-right" autoClose={3000} hideProgressBar={true} />
         </div>
     );
 };

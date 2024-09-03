@@ -8,7 +8,7 @@ const LOCATE_TYPE_LABELS = {
     '3': 'Double Sided incl Road'
 };
 
-const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurrentPage, rowsPerPage, handleOpenNarrative, LocateLine, handleFetchData}) => {
+const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurrentPage, rowsPerPage, handleOpenNarrative, LocateLine, handleFetchData }) => {
     const totalPages = Math.ceil(narrativeLines.length / rowsPerPage);
 
     const handlePageChange = (page) => {
@@ -47,7 +47,7 @@ const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurren
                     {narrativeLines
                         .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
                         .map((line, index) => (
-                            <tr key={line.timestamp}> {/* Ensure that each `tr` has a unique key */}
+                            <tr key={line.timestamp}>
                                 <td className="p-2 border border-gray-300">{index + 1}</td>
                                 <td className="p-2 border border-gray-300">{line.line_name || 'No Name'}</td>
                                 <td className="p-2 border border-gray-300">
@@ -85,6 +85,7 @@ const ProjectTable = ({ narrativeLines, handleDeleteLine, currentPage, setCurren
                             </tr>
                         ))}
                 </tbody>
+
             </table>
             <div className="flex justify-between mt-4">
                 <button

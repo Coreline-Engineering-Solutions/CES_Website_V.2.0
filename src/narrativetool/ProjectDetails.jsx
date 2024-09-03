@@ -3,7 +3,7 @@ import { FaDownload, FaTrash} from "react-icons/fa";
 import { radioMap } from "../constants";
 import { ToggleSwitch } from "../components";
 
-const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, setLocateType, setLineName,lineName,locateType,onToggle }) => {
+const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, setLocateType, setLineName,lineName,locateType,onToggle,lineLength,setLineLength }) => {
 
     const handleLocateTypeChange = (event) => {
         const locateType = event.target.value;
@@ -13,6 +13,11 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
 	const handleLineNameChange = (event) => {
         const lineName = event.target.value;
 		setLineName(lineName);
+	};
+
+    const handleLineLengthChange = (event) => {
+        const lineLength = event.target.value;
+		setLineLength(lineLength);
 	};
 
     return (
@@ -48,6 +53,17 @@ const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSessio
                             className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                             placeholder="Enter line name"
                             onChange={handleLineNameChange}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Max Line Length</label>
+                        <label className="block text-xs text-gray-700">* If Applicable</label>
+                        <input
+                            type="number"
+                            value= {lineLength}
+                            className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                            placeholder="Enter line length"
+                            onChange={handleLineLengthChange}
                         />
                     </div>
                     <div className="flex space-x-2">

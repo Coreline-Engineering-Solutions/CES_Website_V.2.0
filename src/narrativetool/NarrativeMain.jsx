@@ -7,6 +7,8 @@ import { useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { geolocation } from '../hooks';
+import { useNavigate } from 'react-router-dom';
+
 
 
 function NarrativeMain() {
@@ -27,18 +29,29 @@ function NarrativeMain() {
 	const [lineName, setLineName] = useState("");
 	const location = geolocation(); // Use the geolocation hook
 	const [showPins, setShowPins] = useState(true);
-
+	const [lineLength, setLineLength] = useState("");
 	const locateTypeRef = useRef(locateType);
 	const lineNameRef = useRef(lineName);
-  
+	const lineLengthRef = useRef(lineLength);
+	const navigate = useNavigate();
+
 	useEffect(() => {
-	  locateTypeRef.current = locateType;
+		locateTypeRef.current = locateType;
 	}, [locateType]);
-  
+
 	useEffect(() => {
-	  lineNameRef.current = lineName;
+		lineNameRef.current = lineName;
 	}, [lineName]);
-	
+
+	useEffect(() => {
+		lineLengthRef.current = lineLength;
+	}, [lineLength]);
+
+	useEffect(() => {
+		if (!username) {
+			navigate('/Login'); // Redirect to the login page if _USERNAME is empty
+		}
+	}, [username, navigate]);
 
 	const LocateLine = (lineCoordinates, index) => {
 		if (lineCoordinates.length > 0) {
@@ -57,13 +70,15 @@ function NarrativeMain() {
 				setGlowingLineIndex(index);
 			}
 		} else {
-			toast.error("No line coordinates available.");
+			toast.error("No line coordinates available.", { toastId: 'locateLineError', containerId: 'narrativeMain-toast-container' });
 		}
 	};
 
+	
+
 	const handleShowLocation = () => {
 		const map = mapRef.current;
-	
+
 		if (map) {
 			if (location.loaded && location.coordinates.lat && location.coordinates.lng) {
 				// Remove existing marker if it exists and showPins is false
@@ -71,7 +86,7 @@ function NarrativeMain() {
 					map.removeLayer(map.currentLocationMarker);
 					map.currentLocationMarker = null;
 				}
-	
+
 				// Add or keep marker based on showPins state
 				if (showPins) {
 					if (map.currentLocationMarker) {
@@ -81,16 +96,16 @@ function NarrativeMain() {
 						// Add a new marker if it does not exist
 						map.currentLocationMarker = L.marker([location.coordinates.lat, location.coordinates.lng]).addTo(map);
 					}
-					
+
 					map.flyTo([location.coordinates.lat, location.coordinates.lng], 18, { animate: true });
 				}
 			} else if (!location.loaded || !location.coordinates.lat || !location.coordinates.lng) {
-				toast.error(location.error ? location.error.message : "Location not available");
+				toast.error(location.error ? location.error.message : "Location not available", { toastId: 'locateLineNotAvailableError', containerId: 'narrativeMain-toast-container' });
 			}
 		}
 	};
-	
-	
+
+
 
 	useEffect(() => {
 		if (selectedProject) {
@@ -100,7 +115,6 @@ function NarrativeMain() {
 		}
 
 	}, [selectedProject]);
-
 
 
 	const parseCoordinates = (lineAsText) => {
@@ -155,18 +169,15 @@ function NarrativeMain() {
 				const coordinates = fetchedLines.map((line) => line.coordinates || []);
 				setCoordinates(coordinates);
 			} else {
-				console.error(
-					"Fetched data is not in the expected format:",
-					response.data
-				);
 				toast.error("Fetched data is not in the expected format.", {
 					toastId: "fetchDataFormatError",
+					containerId: 'narrativeMain-toast-container'
 				});
 			}
 		} catch (error) {
-			console.error("Error caught when fetching data:", error);
 			toast.error("Error caught when fetching data", {
 				toastId: "fetchDataError",
+				containerId: 'narrativeMain-toast-container'
 			});
 		}
 	};
@@ -175,19 +186,18 @@ function NarrativeMain() {
 		const { coordinates } = newLine;
 		const TIMESTAMP = new Date().toISOString();
 		const currentProject = selectedProject;
-	
-    // Capture latest state values using refs
-    const latestLocateType = locateTypeRef.current;
-    const latestLineName = lineNameRef.current;
 
-	
+		// Capture latest state values using refs
+		const latestLocateType = locateTypeRef.current;
+		const latestLineName = lineNameRef.current;
+		const latestLineLength = lineLengthRef.current;
 		setIsDrawingEnabled(true);
-	
+
 		if (!currentProject) {
 			toast.error("No project selected.");
 			return;
 		}
-	
+
 		try {
 			const response = await axios.post(
 				"https://www.corelineengineering.com/php/add_narline.php",
@@ -198,9 +208,10 @@ function NarrativeMain() {
 					TIMESTAMP: TIMESTAMP,
 					LOCATE_TYPE: latestLocateType,
 					LINE_NAME: latestLineName,
+					LINE_LENGTH: latestLineLength,
 				}
 			);
-	
+
 			if (response.data === "_S") {
 				handleFetchData();
 				setProjectLines((prevLines) => ({
@@ -216,10 +227,86 @@ function NarrativeMain() {
 				]);
 			}
 		} catch (error) {
-			toast.error("Error caught when submitting line");
+			toast.error("Error caught when submitting line", { toastId: "submitLineError", containerId: 'narrativeMain-toast-container' });
 		}
 	};
-	
+
+	const handleEditNewLine = async (line) => {
+		const { coordinates } = line;
+		const TIMESTAMP = new Date().toISOString();
+		const currentProject = selectedProject;
+	  
+		// Capture the latest state values using refs
+		const latestLocateType = locateTypeRef.current;
+		const latestLineName = lineNameRef.current;
+		const latestLineLength = lineLengthRef.current;
+	  
+		setIsDrawingEnabled(true);
+	  
+		if (!currentProject) {
+		  toast.error("No project selected.");
+		  return;
+		}
+	  
+		try {
+		  // First, attempt to delete the existing line
+		  const deleteResponse = await axios.post(
+			"https://www.corelineengineering.com/php/nar_l_delete.php",
+			{
+			  USERNAME: username,
+			  PROJECT: selectedProject,
+			  TIMESTAMP: line.timestamp,
+			}
+		  );
+	  
+		  if (deleteResponse.data === "_S") {
+			// Remove the deleted line from the state
+			setNarrativeLines((prevLines) =>
+			  prevLines.filter((prevLine) => prevLine.timestamp !== line.timestamp)
+			);
+			handleFetchData(); // Reload the table after deletion
+	  
+			// Proceed to add the new line
+			const addResponse = await axios.post(
+			  "https://www.corelineengineering.com/php/add_narline.php",
+			  {
+				user_name: username,
+				project: currentProject,
+				line_data: coordinates,
+				TIMESTAMP: TIMESTAMP,
+				LOCATE_TYPE: latestLocateType,
+				LINE_NAME: latestLineName,
+				LINE_LENGTH: latestLineLength,
+			  }
+			);
+	  
+			if (addResponse.data === "_S") {
+			  handleFetchData(); // Reload the table after addition
+			  setProjectLines((prevLines) => ({
+				...prevLines,
+				[currentProject]: [
+				  ...(prevLines[currentProject] || []),
+				  { coordinates, TIMESTAMP, status: "Submitted" },
+				],
+			  }));
+			  setCoordinates((prevCoordinates) => [
+				...prevCoordinates,
+				coordinates,
+			  ]);
+			} else {
+			  throw new Error("Failed to add the new line.");
+			}
+		  } else {
+			throw new Error("Failed to delete the existing line.");
+		  }
+		} catch (error) {
+		  toast.error("Error caught during line update: " + error.message, {
+			containerId: "narrativeMain-toast-container",
+		  });
+		}
+	  };
+	  
+
 
 	return (
 		<main id="narrativemain" className="overflow-hidden h-screen ">
@@ -228,7 +315,7 @@ function NarrativeMain() {
 				_USERNAME={username}
 				onTileLayerChange={setCurrentTileLayer}
 				onShowLocation={handleShowLocation}
-				setShowPins={setShowPins}  
+				setShowPins={setShowPins}
 
 			/>
 			<div className="flex h-full z-10 ">
@@ -241,9 +328,11 @@ function NarrativeMain() {
 					handleFetchData={handleFetchData}
 					setLocateType={setLocateType}
 					setLineName={setLineName}
-					LocateLine={LocateLine} 
+					LocateLine={LocateLine}
 					lineName={lineName}
 					locateType={locateType}
+					setLineLength={setLineLength}
+					lineLength={lineLength}
 					setShowPins={setShowPins}      // Pass setLineName to update state
 				/>
 				<Narrative className="h-full "
@@ -252,14 +341,16 @@ function NarrativeMain() {
 					glowingLineIndex={glowingLineIndex}
 					setGlowingLineIndex={setGlowingLineIndex}
 					handleAddNewLine={handleAddNewLine}
+					handleEditNewLine ={handleEditNewLine}
 					isDrawingEnabled={isDrawingEnabled}
 					mapRef={mapRef} // Add this prop
 					tileLayer={currentTileLayer}  // Pass the current tile layer to Narrative
 					showPins={showPins}
+					lineLength={lineLength} // Pass the lineLength to Narrative
 
 				/>
 			</div>
-
+			<ToastContainer containerId="narrativeMain-toast-container" autoClose={3000} />
 		</main>
 	);
 }

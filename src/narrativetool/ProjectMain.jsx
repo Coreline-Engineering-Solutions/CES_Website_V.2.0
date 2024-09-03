@@ -9,7 +9,6 @@ import ProjectDetails from "./ProjectDetails";
 import ProjectTable from "./ProjectTable";
 import Modal from "./ProjectModal";
 import { ces, Loginbg } from "../assets/images";
-import Narrative from "./Narrative";
 
 const ProjectMain = ({
 	setSelectedProject,
@@ -21,7 +20,9 @@ const ProjectMain = ({
 	setLineName,
 	lineName,
 	locateType,
-	setShowPins,   // Add these props
+	setShowPins,
+	lineLength,
+	setLineLength,  // Add these props
 }) => {
 	const [selection, setSelection] = useState("");
 	const [projectName, setProjectName] = useState("");
@@ -78,44 +79,69 @@ const ProjectMain = ({
 			setExistingProjects(response.data);
 		} catch (error) {
 			if (!toast.isActive("fetchProjectsError")) {
-				toast.error("Error fetching projects", {
-					toastId: "fetchProjectsError",
-				});
+				toast.error("Error fetching projects", { containerId: "projectToastContainer" });
 			}
 		}
 	};
 	const handleToggle = (toggleValue) => {
-        setShowPins(toggleValue === 1);
-    };
-
+		setShowPins(toggleValue === 1);
+	};
 	const CreateProject = async () => {
+		// Ensure projectName and projectDescription are defined and trimmed
+		const trimmedProjectName = projectName?.trim() || "";
+		const trimmedProjectDescription = projectDescription?.trim() || "";
+
+		// Check if a project with the same name or description already exists
+		const projectExists = existingProjects.some(
+			(project) =>
+				project.job_reference?.trim() === trimmedProjectName ||
+				project.job_description?.trim() === trimmedProjectDescription
+		);
+
+		if (projectExists) {
+			toast.error(
+				"A project with the same name or description already exists. Please use a different name or description.",
+				{ containerId: "projectToastContainer" }
+			);
+			return; // Prevent further execution
+		}
+
 		try {
 			const submissionData = {
-				_PROJECT: projectName,
-				_DESCRIPTION: projectDescription,
+				_PROJECT: trimmedProjectName,
+				_DESCRIPTION: trimmedProjectDescription,
 				_USERNAME: username,
 			};
 			const response = await axios.post(
 				"https://www.corelineengineering.com/php/create_project.php",
 				submissionData
 			);
-			setProjectDetails(submissionData);
+			setProjectDetails({
+				job_reference: trimmedProjectName,
+				job_description: trimmedProjectDescription,
+			});
 			fetchProjects();
 			setSelectedProject(submissionData._PROJECT);
 			setActiveTab("details");
 			if (response.data === "_S") {
-				toast.success("Project created successfully");
+				toast.success("Project created successfully", {
+					containerId: "projectToastContainer",
+				});
 			} else {
-				toast.error("Failed to create project");
+				toast.error("Failed to create project", {
+					containerId: "projectToastContainer",
+				});
 			}
 		} catch (error) {
 			if (!toast.isActive("createProjectError")) {
 				toast.error("Error creating project", {
-					toastId: "createProjectError",
+					containerId: "projectToastContainer",
 				});
 			}
 		}
 	};
+
+
 
 	const handleOpenProject = (projectReference) => {
 
@@ -161,12 +187,45 @@ const ProjectMain = ({
 			}
 		} catch (error) {
 			if (!toast.isActive("deleteLineError")) {
-				toast.error("Error caught when deleting line", {
-					toastId: "deleteLineError",
+				toast.error("Error caught when deleting line", { containerId: "projectToastContainer" });
+			}
+		}
+	};
+
+
+	const deleteProject = async (projectReference) => {
+		try {
+			const response = await axios.post(
+				"https://www.corelineengineering.com/php/delete_nar_project.php",
+				{
+					USERNAME: username,
+					PROJECT: projectReference,
+				}
+			);
+
+			if (response.data === "_S") {
+				fetchProjects();
+				setSelectedProject(null); // or an empty state like {}
+				// Optionally reset the active tab:
+				setActiveTab("selection");
+				// Refresh the projects list after deletion
+				toast.success("Project deleted successfully", {
+					containerId: "projectToastContainer",
+				});
+			} else {
+				toast.error("Failed to delete project", {
+					containerId: "projectToastContainer",
+				});
+			}
+		} catch (error) {
+			if (!toast.isActive("deleteProjectError")) {
+				toast.error("Error caught when deleting project", {
+					containerId: "projectToastContainer",
 				});
 			}
 		}
 	};
+
 
 	const handleClearSession = async () => {
 		try {
@@ -183,9 +242,7 @@ const ProjectMain = ({
 			}
 		} catch (error) {
 			if (!toast.isActive("clearSessionError")) {
-				toast.error("Error caught when clearing session", {
-					toastId: "clearSessionError",
-				});
+				toast.error("Error caught when clearing session", { containerId: "projectToastContainer" });
 			}
 		}
 	};
@@ -214,9 +271,7 @@ const ProjectMain = ({
 			}
 		} catch (error) {
 			if (!toast.isActive("downloadCSVError")) {
-				toast.error("Error caught when clearing session", {
-					toastId: "downloadCSVError",
-				});
+				toast.error("Error caught when clearing session", { containerId: "projectToastContainer" });
 			}
 		}
 	};
@@ -276,7 +331,7 @@ const ProjectMain = ({
 				}}
 			/>
 			<div
-				className="flex flex-col justify-start items-start h-full pt-24 p-5 border border-gray-300 shadow-md"
+				className="flex flex-col justify-start items-start h-full pt-24 p-5 border overflow-y-auto border-gray-300 shadow-md"
 				style={{ width: `${width}px` }} // Apply the dynamic width here
 			>
 				<ProjectTabs
@@ -297,6 +352,8 @@ const ProjectMain = ({
 						CreateProject={CreateProject}
 						handleOpenProject={handleOpenProject}
 						handleFetchData={handleFetchData}
+						deleteProject={deleteProject}
+						fetchProjects={fetchProjects}
 					/>
 				)}
 				{activeTab === "details" && (
@@ -309,6 +366,8 @@ const ProjectMain = ({
 						setLineName={setLineName}
 						lineName={lineName}
 						locateType={locateType}
+						setLineLength={setLineLength}
+						lineLength={lineLength}
 						onToggle={handleToggle}
 
 					/>
@@ -322,7 +381,7 @@ const ProjectMain = ({
 						rowsPerPage={rowsPerPage}
 						handleOpenNarrative={handleOpenNarrative}
 						LocateLine={LocateLine}
-						 handleFetchData={handleFetchData}
+						handleFetchData={handleFetchData}
 					/>
 				)}
 			</div>
@@ -331,10 +390,10 @@ const ProjectMain = ({
 				handleCloseModal={handleCloseModal}
 				modalContent={modalContent}
 			/>
-			<ToastContainer />
+			<ToastContainer containerId="projectToastContainer" />
 
 			<div
-				className="w-2  bg-[#00309e] hover:bg-blue-500 duration-300  cursor-col-resize"
+				className=" w-1 hover:w-2  bg-[#00309e] hover:bg-blue-500 duration-300  cursor-col-resize"
 				onMouseDown={handleMouseDown}
 			/>
 		</div>

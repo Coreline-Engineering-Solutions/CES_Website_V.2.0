@@ -50,8 +50,6 @@ const VerifyEmail = () => {
         }
     };
 
-    console.log(loginResult)
-
     useEffect(() => {
         if (loginResult === '_S_TRUE') {
             toast.success('Login successful!');

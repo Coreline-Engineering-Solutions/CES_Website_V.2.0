@@ -10,10 +10,10 @@ const Modal = ({ showModal, handleCloseModal, modalContent }) => {
         if (showModal && modalContent) {
             navigator.clipboard.writeText(modalContent)
                 .then(() => {
-                    toast.success("Narrative content copied to clipboard!");
+                    toast.success("Narrative content copied to clipboard!", { toastId: 'modal-toast', containerId: 'modal-toast-container' });
                 })
                 .catch(() => {
-                    toast.error("Failed to copy content to clipboard.");
+                    toast.error("Failed to copy content to clipboard.", { toastId: 'modal-toast-error', containerId: 'modal-toast-container' });
                 });
         }
     }, [showModal, modalContent]);
@@ -63,7 +63,7 @@ const Modal = ({ showModal, handleCloseModal, modalContent }) => {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer containerId="modal-toast-container" />
         </>
     );
 };

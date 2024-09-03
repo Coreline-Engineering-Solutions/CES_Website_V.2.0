@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Ensure you have this import
+import React, { useState } from 'react';
+import axios from 'axios';
 import { ces, Loginbg } from '../assets/images';
-import { toast, ToastContainer } from 'react-toastify'; // Ensure you have this import and have installed react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Ensure you have this import
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function PassReset() {
     const navigate = useNavigate();
@@ -27,7 +26,7 @@ function PassReset() {
     };
 
     const validateForm = () => {
-        const {  password, password_confirm } = formData;
+        const { password, password_confirm } = formData;
         const errors = [];
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
@@ -41,7 +40,7 @@ function PassReset() {
 
         setErrors(errors);
         if (errors.length > 0) {
-            errors.forEach(error => toast.error(error));
+            errors.forEach(error => toast.error(error, { containerId: 'passResetToastContainer' }));
         }
         return errors.length === 0;
     };
@@ -50,7 +49,7 @@ function PassReset() {
         e.preventDefault();
     
         if (!validateForm()) {
-            toast.error('Please correct the errors in the form.');
+            toast.error('Please correct the errors in the form.', { containerId: 'passResetToastContainer' });
             return;
         }
     
@@ -71,21 +70,20 @@ function PassReset() {
             const result = response.data;
     
             if (result === '_TRUE') {
-                toast.success('Password has been reset successfully');
+                toast.success('Password has been reset successfully', { containerId: 'passResetToastContainer' });
     
                 // Redirect after 3 seconds
                 setTimeout(() => {
-                    navigate('/Login'); // Ensure this route exists
+                    navigate('/Login');
                 }, 3000);
     
             } else {
-                toast.error('Password reset failed. Please try again.');
+                toast.error('Password reset failed. Please try again.', { containerId: 'passResetToastContainer' });
             }
         } catch (error) {
-            toast.error('An error occurred during the process. Please try again.');
+            toast.error('An error occurred during the process. Please try again.', { containerId: 'passResetToastContainer' });
         }
     };
-    
 
     return (
         <div
@@ -155,7 +153,7 @@ function PassReset() {
                         <a href="mailto:info@corelineengineering.com?subject=Contact%20Us" className="hover:underline">Contact Us</a>
                     </p>
                 </form>
-                <ToastContainer />
+                <ToastContainer containerId="passResetToastContainer" />
             </div>
         </div>
     );
