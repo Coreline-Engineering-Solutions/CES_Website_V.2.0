@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ces } from '../assets/images';
+import { ces,CESLogoWhite } from '../assets/images';
 import { Signout } from '../assets/icons';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -22,12 +22,12 @@ const UserNavbar = ({ _USERNAME }) => {
     };
 
     return (
-        <nav className="text-white shadow-md relative">
+        <nav className="text-white shadow-md relative bg-gradient-to-tr from-blue-800 via-blue-300 to-slate-50 hover:text-white">
             <div className="mx-auto px-16 py-4 flex justify-between items-center">
                 {/* Brand/Logo */}
                 <div className="text-lg font-semibold flex items-center space-x-2">
-                    <img className="drop-shadow-xl" src={ces} alt="Logo" width={60} />
-                    <a href="#" className="text-black hover:text-gray-300">
+                    <img className="drop-shadow-xl" src={CESLogoWhite} alt="Logo" width={60} />
+                    <a href="#" className="text-white hover:text-gray-300">
                         CoreLine Solutions Dashboard
                     </a>
                 </div>

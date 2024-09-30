@@ -9,6 +9,9 @@ import ProjectDetails from "./ProjectDetails";
 import ProjectTable from "./ProjectTable";
 import Modal from "./ProjectModal";
 import { ces, Loginbg } from "../assets/images";
+import * as XLSX from "xlsx";
+import NarrativeTable from "./NarrativeTable";
+import Swal from "sweetalert2";
 
 const ProjectMain = ({
 	setSelectedProject,
@@ -23,52 +26,36 @@ const ProjectMain = ({
 	setShowPins,
 	lineLength,
 	setLineLength,  // Add these props
+	onToggleChange,
+	onSelectedOptionChange,
+	setWorkPrint,
+	toggles,
+	options,
+	workPrints,
+	setPointData ,
+	pointData,				 
 }) => {
-	const [selection, setSelection] = useState("");
-	const [projectName, setProjectName] = useState("");
-	const [projectDescription, setProjectDescription] = useState("");
-	const [existingProjects, setExistingProjects] = useState([]);
-	const [projectDetails, setProjectDetails] = useState("");
-	const [narrativeLines, setNarrativeLines] = useState([]); // Lines fetched from the database
-	const [newLines, setNewLines] = useState([]); // Newly drawn lines
-	const location = useLocation();
-	const username = location.state?.username || "";
-	const [selectedOption, setSelectedOption] = useState("");
-	const [activeTab, setActiveTab] = useState("selection");
-	const [showModal, setShowModal] = useState(false);
-	const [modalContent, setModalContent] = useState("");
-	const [currentPage, setCurrentPage] = useState(1);
+	const [selection, setSelection] 					= useState("");
+	const [projectName, setProjectName] 				= useState("");
+	const [projectDescription, setProjectDescription] 	= useState("");
+	const [existingProjects, setExistingProjects]		= useState([]);
+	const [projectDetails, setProjectDetails] 			= useState("");
+	const [narrativeLines, setNarrativeLines] 			= useState([]); // Lines fetched from the database
+	const [newLines, setNewLines] 						= useState([]); // Newly drawn lines
+	const location 										= useLocation();
+	const username 										= location.state?.username || "";
+	const [selectedOption, setSelectedOption] 			= useState("");
+	const [activeTab, setActiveTab] 					= useState("selection");
+	const [showModal, setShowModal] 					= useState(false);
+	const [modalContent, setModalContent] 				= useState("");
+	const [currentPage, setCurrentPage] 				= useState(1);
 	const rowsPerPage = 5;
-	const [width, setWidth] = useState(380); // Initial width of the section
-	const [isDragging, setIsDragging] = useState(false);
-
-	const handleMouseDown = () => {
-		setIsDragging(true);
-		document.addEventListener("mousemove", handleMouseMove);
-		document.addEventListener("mouseup", handleMouseUp);
-	};
-
-	const handleMouseUp = () => {
-		setIsDragging(false);
-		document.removeEventListener("mousemove", handleMouseMove);
-		document.removeEventListener("mouseup", handleMouseUp);
-	};
-
-	const handleMouseMove = (e) => {
-		if (isDragging) {
-			const newWidth = e.clientX;
-			setWidth(newWidth > 100 ? newWidth : 100); // Minimum width of 100px
-		}
-	};
-
+	const [width, setWidth] 							= useState(380); // Initial width of the section
+	// Use useEffect to fetch project data when selectedProject changes
 	useEffect(() => {
-		if (selectedProject) {
-			handleFetchData(selectedProject);
-			setActiveTab("details"); // Automatically switch to the details tab
-		}
-		fetchProjects();
 
-	}, [selectedProject]);
+		fetchProjects();
+	}, [selectedProject, handleFetchData]);
 
 	const fetchProjects = async () => {
 		try {
@@ -141,20 +128,21 @@ const ProjectMain = ({
 		}
 	};
 
-
-
 	const handleOpenProject = (projectReference) => {
 
 		const project = existingProjects.find(
 			(p) => p.job_reference === projectReference
 		);
-
 		if (project) {
 			setProjectDetails(project);
 			setSelectedProject(projectReference);
 			setActiveTab("details");
+
+			
 		} else {
-			console.error("Project not found for reference:", projectReference);
+			toast.error("Project not found for reference:", projectReference, {
+				containerId: "projectToastContainer",
+			});
 		}
 	};
 
@@ -192,8 +180,8 @@ const ProjectMain = ({
 		}
 	};
 
-
 	const deleteProject = async (projectReference) => {
+		
 		try {
 			const response = await axios.post(
 				"https://www.corelineengineering.com/php/delete_nar_project.php",
@@ -226,21 +214,51 @@ const ProjectMain = ({
 		}
 	};
 
-
 	const handleClearSession = async () => {
 		try {
-			const response = await axios.post(
-				"https://www.corelineengineering.com/php/clear_l_session.php",
-				{
-					USERNAME: username,
-					PROJECT: selectedProject,
+			// Show SweetAlert2 confirmation dialog
+			const result = await Swal.fire({
+				title: 'Are you sure?',
+				text: "This session will be permanently deleted!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#00309e',
+				cancelButtonColor: 'red',
+				confirmButtonText: 'Yes, delete it!'
+			});
+	
+			// Proceed if the user confirmed the action
+			if (result.isConfirmed) {
+				// Perform the deletion operation
+				const response = await axios.post(
+					"https://www.corelineengineering.com/php/clear_l_session.php",
+					{
+						USERNAME: username,
+						PROJECT: selectedProject,
+					}
+				);
+	
+				if (response.data === "_S") {
+					handleFetchData(); // Reload table
+	
+					// Optionally, you may want to remove or fetch projects again
+					fetchProjects();
+				} else {
+					// Handle unexpected response here
+					toast.error("Unexpected response from server", {
+						containerId: "projectToastContainer",
+					});
 				}
-			);
-
-			if (response.data === "_S") {
-				handleFetchData(); // Reload table
+	
+				// Show success message after deletion
+				await Swal.fire(
+					'Deleted!',
+					'Your session has been deleted.',
+					'success'
+				);
 			}
 		} catch (error) {
+			// Handle errors from axios or Swal
 			if (!toast.isActive("clearSessionError")) {
 				toast.error("Error caught when clearing session", { containerId: "projectToastContainer" });
 			}
@@ -275,7 +293,55 @@ const ProjectMain = ({
 			}
 		}
 	};
-
+	const handleDownloadExcel = async () => {
+		try {
+			const response = await axios.post(
+				"https://www.corelineengineering.com/php/csv_downloader.php",
+				{
+					USERNAME: username,
+					PROJECT: selectedProject,
+				}
+			);
+	
+			if (response.data === "_S") {
+				toast.success("Downloading Excel file", { toastId: "downloadExcelSuccess" });
+			} else if (response.data.error === "No data found") {
+				if (!toast.isActive("noDataError")) {
+					toast.error("No data found for the selected project", {
+						toastId: "noDataError",
+					});
+				}
+			} else if (Array.isArray(response.data)) {
+				// Process and format the data
+				const formattedData = response.data.map(item => ({
+					Hyperlink: {
+						f: `HYPERLINK("${item.hyperlink}", "Google Drive Link")`,
+					},
+					"Line Name": item.line_name || "N/A",
+					Narrative: `${item.narrative || ""}`,
+					"Work Prints": item.work_prints || "N/A",
+				}));
+	
+				// Create worksheet and workbook
+				const worksheet = XLSX.utils.json_to_sheet(formattedData, {
+					cellStyles: true
+				});
+				const workbook = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(workbook, worksheet, "Project Data");
+	
+				// Use the selected project name as the file name
+				const fileName = selectedProject ? `${selectedProject}.xlsx` : "project_data.xlsx";
+	
+				// Write the Excel file and trigger download
+				XLSX.writeFile(workbook, fileName);
+			}
+		} catch (error) {
+			if (!toast.isActive("downloadExcelError")) {
+				toast.error("Error caught when downloading Excel file", { containerId: "projectToastContainer" });
+			}
+		}
+	};
+	
 	const convertToCSV = (data) => {
 		const replacer = (key, value) => (value === null ? "" : value);
 		const csvRows = [];
@@ -295,8 +361,6 @@ const ProjectMain = ({
 		return csvRows.join("\n");
 	};
 
-
-
 	const downloadCSV = (csvContent, fileName) => {
 		const blob = new Blob([csvContent], { type: "text/csv" });
 		const url = window.URL.createObjectURL(blob);
@@ -309,11 +373,10 @@ const ProjectMain = ({
 		document.body.removeChild(a);
 	};
 
+
 	return (
 		<div
 			className="flex h-screen"
-			onMouseMove={handleMouseMove}
-			onMouseUp={handleMouseUp}
 		>
 			<div
 				style={{
@@ -331,7 +394,7 @@ const ProjectMain = ({
 				}}
 			/>
 			<div
-				className="flex flex-col justify-start items-start h-full pt-24 p-5 border overflow-y-auto border-gray-300 shadow-md"
+				className="flex flex-col justify-start items-start h-full pt-24 p-5 border overflow-y-auto border-gray-300 shadow-md resize-x"
 				style={{ width: `${width}px` }} // Apply the dynamic width here
 			>
 				<ProjectTabs
@@ -341,34 +404,44 @@ const ProjectMain = ({
 				/>
 				{activeTab === "selection" && (
 					<ProjectSelection
-						selection={selection}
-						setSelection={setSelection}
-						projectName={projectName}
-						setProjectName={setProjectName}
-						projectDescription={projectDescription}
-						setProjectDescription={setProjectDescription}
-						existingProjects={existingProjects}
-						setSelectedProject={setSelectedProject}
-						CreateProject={CreateProject}
-						handleOpenProject={handleOpenProject}
-						handleFetchData={handleFetchData}
-						deleteProject={deleteProject}
-						fetchProjects={fetchProjects}
+						selection=				{selection}
+						setSelection=			{setSelection}
+						projectName=			{projectName}
+						setProjectName=			{setProjectName}
+						projectDescription=		{projectDescription}
+						setProjectDescription=	{setProjectDescription}
+						existingProjects=		{existingProjects}
+						setSelectedProject=		{setSelectedProject}
+						CreateProject=			{CreateProject}
+						handleOpenProject=		{handleOpenProject}
+						handleFetchData=		{handleFetchData}
+						deleteProject=			{deleteProject}
+						fetchProjects=			{fetchProjects}
+						selectedProject=		{selectedProject}
 					/>
 				)}
 				{activeTab === "details" && (
 					<ProjectDetails
-						projectDetails={projectDetails}
-						handleOpenNarrative={handleOpenNarrative}
-						handleClearSession={handleClearSession}
-						handleDownloadCSV={handleDownloadCSV}
-						setLocateType={setLocateType}
-						setLineName={setLineName}
-						lineName={lineName}
-						locateType={locateType}
-						setLineLength={setLineLength}
-						lineLength={lineLength}
-						onToggle={handleToggle}
+						projectDetails=			{projectDetails}
+						handleOpenNarrative=	{handleOpenNarrative}
+						handleClearSession=		{handleClearSession}
+						handleDownloadCSV=		{handleDownloadCSV}
+						setLocateType=			{setLocateType}
+						setLineName=			{setLineName}
+						lineName=				{lineName}
+						locateType=				{locateType}
+						setLineLength=			{setLineLength}
+						lineLength=				{lineLength}
+						onToggle=				{handleToggle}
+						handleDownloadExcel=	{handleDownloadExcel}
+						onToggleChange=			{onToggleChange}
+						onSelectedOptionChange=	{onSelectedOptionChange}
+						setWorkPrint=			{setWorkPrint}
+						stateToggles = 			{toggles}
+						stateOptions = 			{options}
+						workPrints=				{workPrints}
+						setPointData = 			{setPointData}
+						pointData=				{pointData}
 
 					/>
 				)}
@@ -382,7 +455,9 @@ const ProjectMain = ({
 						handleOpenNarrative={handleOpenNarrative}
 						LocateLine={LocateLine}
 						handleFetchData={handleFetchData}
+
 					/>
+
 				)}
 			</div>
 			<Modal
@@ -393,8 +468,8 @@ const ProjectMain = ({
 			<ToastContainer containerId="projectToastContainer" />
 
 			<div
-				className=" w-1 hover:w-2  bg-[#00309e] hover:bg-blue-500 duration-300  cursor-col-resize"
-				onMouseDown={handleMouseDown}
+				className=" w-1  bg-[#00309e] duration-300 resize-x"
+
 			/>
 		</div>
 	);

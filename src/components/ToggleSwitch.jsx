@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaMapMarkerAlt } from 'react-icons/fa'; // Import map pin icon
 
 const ToggleSwitch = ({ onToggle }) => {
     const [isToggled, setIsToggled] = useState(false);
@@ -7,34 +8,20 @@ const ToggleSwitch = ({ onToggle }) => {
         const newState = !isToggled;
         setIsToggled(newState);
         if (onToggle) {
-            // Send 1 if toggled on, 0 if toggled off
-            onToggle(newState ? 0 : 1);
+            onToggle(newState ? 0 : 1); // Send toggle state to parent
         }
     };
 
     return (
-        <div className="flex items-center py-4">
-            <label className="mr-4 ">Toggle Pins</label>
-            <label className="flex items-center cursor-pointer">
-                <div className="relative">
-                    <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={isToggled}
-                        onChange={handleToggle}
-                    />
-                    <div className="w-10 h-4 bg-[#00309e] rounded-full shadow-inner"></div>
-                    <div
-                        className={`dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition ${
-                            isToggled ? 'transform translate-x-full bg-blue-500' : ''
-                        }`}
-                    ></div>
-                </div>
-                <span className="ml-3">
-                    {isToggled ? 'Off' : 'On'}
-                </span>
-            </label>
-        </div>
+        <button
+            onClick={handleToggle}
+            className={`p-3 rounded-lg transition duration-200 flex items-center justify-center ${
+                isToggled ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'
+            } hover:${isToggled ? 'bg-blue-400' : 'bg-gray-400'}`}
+            title={isToggled ? 'Disable Pins' : 'Enable Pins'}
+        >
+            <FaMapMarkerAlt className="text-2xl" /> {/* Pin icon */}
+        </button>
     );
 };
 

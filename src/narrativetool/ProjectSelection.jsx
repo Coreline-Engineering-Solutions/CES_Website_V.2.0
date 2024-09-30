@@ -10,11 +10,13 @@ const ProjectSelection = ({
     projectDescription,
     setProjectDescription,
     existingProjects,
+    selectedProject, // Added selectedProject to track the active project
     setSelectedProject,
     CreateProject,
     handleOpenProject,
     deleteProject,
     fetchProjects,
+    handleFetchData,
 }) => {
 
     const handleCreateAndFetch = () => {
@@ -22,11 +24,18 @@ const ProjectSelection = ({
     };
 
     const handleProjectSelect = (project) => {
+        // Clear any previous project data before setting the new project
+        setSelectedProject(null);
+
+        // Ensure the new project is set
         setSelectedProject(project.job_reference);
         handleOpenProject(project.job_reference);
+
+        // Wait until the selected project is set, then fetch its data
+        setTimeout(() => {
+            handleFetchData();
+        }, 0); // This ensures fetch happens after project state is updated
     };
-
-
 
     const handleDeleteProject = (projectReference) => {
         Swal.fire({
@@ -40,7 +49,7 @@ const ProjectSelection = ({
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteProject(projectReference);
-                fetchProjects()
+                fetchProjects();
                 Swal.fire(
                     'Deleted!',
                     'Your project has been deleted.',
@@ -97,7 +106,9 @@ const ProjectSelection = ({
                         {existingProjects.map((project) => (
                             <div
                                 key={project.job_reference}
-                                className="flex items-center justify-between bg-white p-2 rounded-lg shadow-sm border hover:bg-gray-100 cursor-pointer"
+                                className={`flex items-center justify-between p-2 rounded-lg shadow-sm border hover:bg-gray-100 cursor-pointer ${
+                                    selectedProject === project.job_reference ? 'bg-blue-200 border-blue-500' : 'bg-white'
+                                }`}
                                 onClick={() => handleProjectSelect(project)}
                             >
                                 <div>

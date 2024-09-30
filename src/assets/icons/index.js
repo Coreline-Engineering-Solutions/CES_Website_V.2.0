@@ -29,7 +29,7 @@ import Maptool from './maptool.svg';
 import Progress from './progress.svg';
 import hamburgerB from './hamburgerblack.svg';
 import crossB from './crossblack.svg';
-
+import pindrop from './mappindrop.svg';
 
 
 export {
@@ -54,7 +54,7 @@ export {
     map,
     clock,
     secure,
-        ToolIcon2,
+    ToolIcon2,
     ToolIcon,
     Signout,
     Minimize,
@@ -64,4 +64,5 @@ export {
     hamburgerB,
     crossB,
     Check,
+    pindrop,
 }
