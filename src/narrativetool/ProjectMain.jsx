@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -41,10 +41,8 @@ const ProjectMain = ({
 	const [existingProjects, setExistingProjects]		= useState([]);
 	const [projectDetails, setProjectDetails] 			= useState("");
 	const [narrativeLines, setNarrativeLines] 			= useState([]); // Lines fetched from the database
-	const [newLines, setNewLines] 						= useState([]); // Newly drawn lines
 	const location 										= useLocation();
 	const username 										= location.state?.username || "";
-	const [selectedOption, setSelectedOption] 			= useState("");
 	const [activeTab, setActiveTab] 					= useState("selection");
 	const [showModal, setShowModal] 					= useState(false);
 	const [modalContent, setModalContent] 				= useState("");
@@ -53,10 +51,9 @@ const ProjectMain = ({
 	const [width, setWidth] 							= useState(380); // Initial width of the section
 	// Use useEffect to fetch project data when selectedProject changes
 	useEffect(() => {
-
 		fetchProjects();
-	}, [selectedProject, handleFetchData]);
-
+		return;
+	}, []);
 	const fetchProjects = async () => {
 		try {
 			const response = await axios.post(
@@ -128,7 +125,7 @@ const ProjectMain = ({
 		}
 	};
 
-	const handleOpenProject = (projectReference) => {
+	const handleOpenProject = useCallback ((projectReference) => {
 
 		const project = existingProjects.find(
 			(p) => p.job_reference === projectReference
@@ -144,7 +141,7 @@ const ProjectMain = ({
 				containerId: "projectToastContainer",
 			});
 		}
-	};
+	},[existingProjects]);
 
 	const handleOpenNarrative = (narrative) => {
 		setModalContent(narrative);

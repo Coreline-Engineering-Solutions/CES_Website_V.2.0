@@ -39,7 +39,8 @@ const ProjectTable = ({
 
     useEffect(() => {
         handleFetchData();
-    }, [handleFetchData, currentLinesPage, currentPointsPage]);
+        return;
+    }, []);
 
     const handleLocateClick = (coordinates, isLine) => {
         const index = isLine
@@ -50,16 +51,17 @@ const ProjectTable = ({
     };
 
     return (
-        <div className="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
-             <h2 className="bg-gray-100 p-4 text-xl font-bold mb-4">Narrative Tables</h2>
+        <div className="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md transition-all duration-300">
+            <h2 className="bg-gray-100 p-4 text-xl font-bold mb-4">Narrative Tables</h2>
+
             {/* Narrative Lines Table */}
             <div className="mb-6">
                 <div
-                    className="flex justify-between items-center bg-[#00309e] text-white p-4 rounded-t-lg cursor-pointer"
+                    className={`flex justify-between items-center bg-[#00309e] text-white p-4 rounded-t-lg cursor-pointer transition-all duration-300 ${!isLinesTableOpen ? 'p-2 text-sm' : 'p-4'}`}
                     onClick={() => setIsLinesTableOpen(!isLinesTableOpen)}
                 >
                     <div className="flex items-center space-x-2">
-                        <FaGripLines className="text-white" />  {/* Icon for Narrative Lines */}
+                        <FaGripLines className="text-white" />
                         <h3>Narrative Lines</h3>
                     </div>
                     {isLinesTableOpen ? <FaChevronUp /> : <FaChevronDown />}
@@ -129,6 +131,7 @@ const ProjectTable = ({
                             )}
                         </tbody>
                     </table>
+
                     <div className="flex justify-between mt-4 mb-4">
                         <button
                             className={`px-4 py-2 ${currentLinesPage === 1 ? "bg-gray-300" : "bg-[#00309e] text-white"} rounded-lg`}
@@ -151,11 +154,11 @@ const ProjectTable = ({
             {/* Narrative Points Table */}
             <div>
                 <div
-                    className="flex justify-between items-center bg-[#00309e] text-white p-4 rounded-t-lg cursor-pointer"
+                    className={`flex justify-between items-center bg-[#00309e] text-white p-4 rounded-t-lg cursor-pointer transition-all duration-300 ${!isPointsTableOpen ? 'p-2 text-sm' : 'p-4'}`}
                     onClick={() => setIsPointsTableOpen(!isPointsTableOpen)}
                 >
                     <div className="flex items-center space-x-2">
-                        <FaMapMarkerAlt className="text-white" />  {/* Icon for Map Pins */}
+                        <FaMapMarkerAlt className="text-white" />
                         <h3>Narrative Points</h3>
                     </div>
                     {isPointsTableOpen ? <FaChevronUp /> : <FaChevronDown />}
@@ -191,7 +194,7 @@ const ProjectTable = ({
                                                     onClick={() => handleLocateClick(point.coordinates, false)}
                                                 />
                                             </td>
-                                            <td className="p-2 border-b">
+                                            <td className="p-2 border border-gray-300">
                                                 <button
                                                     className="text-red-600 hover:text-red-800 transition duration-200"
                                                     onClick={() => handleDeletePoint(point)}
@@ -208,7 +211,8 @@ const ProjectTable = ({
                             )}
                         </tbody>
                     </table>
-                    <div className="flex justify-between mt-4 mb-4">
+
+                    <div className="flex justify-between mt-4">
                         <button
                             className={`px-4 py-2 ${currentPointsPage === 1 ? "bg-gray-300" : "bg-[#00309e] text-white"} rounded-lg`}
                             disabled={currentPointsPage === 1}

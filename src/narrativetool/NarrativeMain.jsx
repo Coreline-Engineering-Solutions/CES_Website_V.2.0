@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 function NarrativeMain() {
-	const [center, setCenter] 						= useState({ lat: -33.9249, lng: 18.4241 });
 	const [projectLines, setProjectLines] 			= useState({});
 	const [currentTileLayer, setCurrentTileLayer] 	= useState(
 		TILE_LAYERS.OpenStreetMapUK
@@ -28,10 +27,10 @@ function NarrativeMain() {
 	const [workPrints, setWorkPrint] 				= useState("");
 	const [options, onSelectedOptionChange] 		= useState("");
 	const [pointData, setPointData] 				= useState({
-		pointName: '',
-		workPrintPoint: '',
-		radius: '',
-		locationDirection: '',
+		pointName: "",
+		workPrintPoint: "",
+		radius: "",
+		locationDirection: "",
 	});
 
 	const location 									= geolocation(); // Use the geolocation hook
@@ -54,10 +53,10 @@ function NarrativeMain() {
 	const locateTypeRef 							= useRef(locateType);
 	const lineNameRef 								= useRef(lineName);
 	const lineLengthRef 							= useRef(lineLength);
-	const project 									= useRef(selectedProject);
 	const mapRef 									= useRef();
 	const selectedProjectRef 						= useRef(selectedProject);
 	const latestShowPinsRef 						= useRef(showPins);
+
 
 	// Sync selectedProject state with the ref
 	useEffect(() => {
@@ -70,14 +69,21 @@ function NarrativeMain() {
 	useEffect(() => {
 		latestShowPinsRef.current = showPins;
 	}, [showPins]);
+
 	useEffect(() => {
+		if (selectedProject !== "") {
+			setIsDrawingEnabled(true);
+		} else {
+			setIsDrawingEnabled(false);
+		}
 		selectedProjectRef.current = selectedProject;
+		return;
 	}, [selectedProject]);
 
 	useEffect(() => {
 		locateTypeRef.current = locateType;
 	}, [locateType]);
-
+	
 	useEffect(() => {
 		lineNameRef.current = lineName;
 	}, [lineName]);
@@ -85,12 +91,16 @@ function NarrativeMain() {
 	useEffect(() => {
 		lineLengthRef.current = lineLength;
 	}, [lineLength]);
+	useEffect(() => {
+		pointDataRef.current = pointData; // Sync ref with pointData state
+	  }, [pointData]);
 
 	useEffect(() => {
 		if (!username) {
 			navigate('/Login'); // Redirect to the login page if _USERNAME is empty
 		}
-	}, [username, navigate]);
+		return;
+	}, [username]);
 
 	const LocateLine = (lineCoordinates, index) => {
 		if (lineCoordinates.length > 0) {
@@ -115,28 +125,17 @@ function NarrativeMain() {
 
 	const handleShowLocation = () => {
 		const map = mapRef.current;
-		const Pindrops = latestShowPinsRef.current;  // Use ref to get the latest project
-
+	
 		if (map) {
 			if (location.loaded && location.coordinates.lat && location.coordinates.lng) {
 				// Always move the map to the user's location
 				map.flyTo([location.coordinates.lat, location.coordinates.lng], 18, { animate: true });
-
-				// Show or hide the pin based on Pindrops (showPins state)
-				if (Pindrops) {
-					if (!map.currentLocationMarker) {
-						// Create a new marker if it doesn't exist
-						map.currentLocationMarker = L.marker([location.coordinates.lat, location.coordinates.lng]).addTo(map);
-					} else {
-						// Update the position of the marker if it already exists
-						map.currentLocationMarker.setLatLng([location.coordinates.lat, location.coordinates.lng]);
-					}
+	
+				// Create or update the current location marker
+				if (!map.currentLocationMarker) {
+					map.currentLocationMarker = L.marker([location.coordinates.lat, location.coordinates.lng]).addTo(map);
 				} else {
-					// If Pindrops (showPins) is false, remove the marker if it exists
-					if (map.currentLocationMarker) {
-						map.removeLayer(map.currentLocationMarker);
-						map.currentLocationMarker = null; // Reset the marker reference
-					}
+					map.currentLocationMarker.setLatLng([location.coordinates.lat, location.coordinates.lng]);
 				}
 			} else {
 				toast.error(location.error ? location.error.message : "Location not available", {
@@ -146,15 +145,6 @@ function NarrativeMain() {
 			}
 		}
 	};
-
-	useEffect(() => {
-		if (selectedProject) {
-			setIsDrawingEnabled(true);
-		} else {
-			setIsDrawingEnabled(false);
-		}
-
-	}, [selectedProject]);
 
 	const parseCoordinates = (lineAsText) => {
 		try {
@@ -251,7 +241,6 @@ function NarrativeMain() {
 			});
 		}
 	};
-	
 
 	const handleAddNewPoint = async (newPoint, selectedOption) => {
 		const { coordinates } = newPoint;
@@ -266,13 +255,6 @@ function NarrativeMain() {
 			toast.error("No project selected.");
 			return;
 		}
-
-		console.log(coordinates)
-		console.log(address)
-		console.log(currentProject)
-		console.log(latestPointData)
-
-		
 		try {
 			// Assuming coordinates is an array [LAT, LON]
 
@@ -281,8 +263,6 @@ function NarrativeMain() {
 				{
 					USER_NAME: username,
 					JOB_REFERENCE: currentProject, // Use ref here as well
-					LAT: LAT, // Send latitude
-					LON: LON, // Send longitude
 					TIMESTAMP: TIMESTAMP,
 					// inputs
 					ADDRESS: address,
@@ -325,7 +305,6 @@ function NarrativeMain() {
 		const latestLineLength = lineLengthRef.current;
 		const latestToggles = togglesRef.current;  // Access toggles from the ref
 		const latestWorkPrints = workPrintsRef.current; // Access workPrints from the ref
-		setIsDrawingEnabled(true);
 
 		if (!currentProject) {
 			toast.error("No project selected.");
@@ -425,6 +404,7 @@ function NarrativeMain() {
 					LocateLine=				{LocateLine}
 					handleAddNewPoint=		{handleAddNewPoint}
 					handleFetchPointData=   {handleFetchPointData}
+					pindrops=				{showPins}
 
 				/>
 			</div>

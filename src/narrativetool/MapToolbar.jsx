@@ -36,7 +36,7 @@ const MapToolbar = ({ onShowLocation, onTileLayerChange, _USERNAME }) => {
     };
 
     return (
-        <nav className="bg-gradient-to-r from-[#00309e] to-[#2851a3] flex justify-between items-center px-6 z-50 fixed top-0 left-0 right-0 shadow-lg rounded-b-lg">
+        <nav className="bg-gradient-to-r from-[#00309e] to-[#2851a3] flex justify-between items-center px-6 z-50 fixed top-0 left-0 right-0 shadow-lg">
         <div className="text-white text-lg font-semibold tracking-wider">Narrative Mapping Tool</div>
         <div className="space-x-6 flex items-center">
             <button

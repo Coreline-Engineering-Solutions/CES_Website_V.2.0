@@ -46,12 +46,8 @@ const ProjectSelector = ({ setSelectedProject, selectedProject, setCoordinates, 
         }
     };
 
-
     useEffect(() => {
         fetchProjects();
-    }, [username]);
-
-    useEffect(() => {
         if (selectedProject) {
             const interval = setInterval(handleFetchData, 10000);
             return () => clearInterval(interval);

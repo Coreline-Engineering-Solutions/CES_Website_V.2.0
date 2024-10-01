@@ -117,6 +117,24 @@ const ProjectDetails = ({
                 <p className="text-md text-gray-700 italic leading-relaxed transition-all duration-300">
                     DESCRIPTION: {projectDetails?.job_description}
                 </p>
+                <div className="flex flex-row space-x-2 mt-4 p-3 bg-gray-200 rounded-lg shadow-md">
+                            <button
+                                className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-400 transition duration-200 items-center justify-center"
+                                onClick={handleClearSession}
+                                title="Clear Session"
+                            >
+                                <FaTrash className="text-2xl" />
+                            </button>
+                            <button
+                                className="bg-[#00309e] text-white p-3 rounded-lg hover:bg-blue-500 transition duration-200 items-center justify-center"
+                                onClick={handleDownloadExcel}
+                                title="Download Excel"
+                            >
+                                <FaDownload className="text-2xl" />
+                            </button>
+                            <ToggleSwitch onToggle={onToggle} />
+                        </div>
+
                 {/* Radio Buttons for Option Selection */}
                 <div className="flex space-x-4 mt-4">
                     <label className="flex items-center space-x-2">
@@ -152,28 +170,10 @@ const ProjectDetails = ({
                     </label> */}
                 </div>
 
+                            
                 {/* Conditionally Render Input Fields */}
                 {selectedOption === "lines" && (
-
                     <div className="flex flex-col space-y-4 mt-4">
-                        <div className="flex flex-row space-x-2 mt-4 p-3 bg-gray-200 rounded-lg shadow-md">
-                            <button
-                                className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-400 transition duration-200 items-center justify-center"
-                                onClick={handleClearSession}
-                                title="Clear Session"
-                            >
-                                <FaTrash className="text-2xl" />
-                            </button>
-                            <button
-                                className="bg-[#00309e] text-white p-3 rounded-lg hover:bg-blue-500 transition duration-200 items-center justify-center"
-                                onClick={handleDownloadExcel}
-                                title="Download Excel"
-                            >
-                                <FaDownload className="text-2xl" />
-                            </button>
-                            <ToggleSwitch onToggle={onToggle} />
-                        </div>
-
                         <div>
                             <label className="block text-gray-700">Locate Type:</label>
                             <select
