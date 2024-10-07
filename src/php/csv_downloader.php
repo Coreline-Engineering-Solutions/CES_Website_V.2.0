@@ -19,9 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $postData = json_decode($rawData, true);
     $uname = $postData['USERNAME'];
     $project = $postData['PROJECT'];
-
+     
     try {
-        $sql = "SELECT line_as_text, hyperlink, narative FROM website.nar_line WHERE username=:value AND active_session = 'active' AND job_reference = :project";
+        // Colums needed:
+        // Line name, work_prints, hyperlink, narative, start coordinate, end coordinates
+        $sql = "SELECT     line_name, 
+        work_prints, 
+        line_as_text::jsonb->0 AS start_point,
+        line_as_text::jsonb->(jsonb_array_length(line_as_text::jsonb) - 1) AS end_point, 
+        narative, 
+        hyperlink FROM website.nar_line WHERE username=:value AND active_session = 'active' AND job_reference = :project";
         $stmnt = $pdo->prepare($sql);
         $stmnt->execute([':value' => $uname, ':project' => $project]);
         $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);

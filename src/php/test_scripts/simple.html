@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storage Module Test</title>
+  <script src="storage.js" defer></script> <!-- Link to your JS module -->
+</head>
+<body>
+  <h1>Test Storage Module</h1>
+
+  <!-- GEOJSON Testing Section -->
+  <section>
+    <h2>GEOJSON/Records</h2>
+    <button onclick="createGeoJSON()">Create GeoJSON</button>
+    <button onclick="readGeoJSON()">Read GeoJSON</button>
+    <button onclick="updateGeoJSON()">Update GeoJSON</button>
+    <button onclick="deleteGeoJSON()">Delete GeoJSON</button>
+    <div id="geojson-output"></div>
+  </section>
+
+  <!-- Basemap Tiles Testing Section -->
+  <section>
+    <h2>Basemap Tiles</h2>
+    <button onclick="fetchTile()">Fetch Tile</button>
+    <button onclick="cacheTile()">Cache Tile</button>
+    <div id="tile-output"></div>
+  </section>
+
+  <!-- Files Testing Section -->
+  <section>
+    <h2>Files (Images, PDFs)</h2>
+    <button onclick="uploadFile()">Upload File</button>
+    <button onclick="fetchFile()">Fetch File</button>
+    <button onclick="deleteFile()">Delete File</button>
+    <div id="file-output"></div>
+  </section>
+
+  <!-- Output section for logs -->
+  <div id="output"></div>
+</body>
+</html>
