@@ -30,6 +30,8 @@ import Progress from './progress.svg';
 import hamburgerB from './hamburgerblack.svg';
 import crossB from './crossblack.svg';
 import pindrop from './mappindrop.svg';
+import information from './information.svg'
+import pindropRed from './pindropred.svg';
 
 
 export {
@@ -65,4 +67,6 @@ export {
     crossB,
     Check,
     pindrop,
+    information,
+    pindropRed
 }

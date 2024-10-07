@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, Polyline, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, Polyline, Marker, Popup,LayerGroup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { EditControl } from 'react-leaflet-draw';
@@ -7,7 +7,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Search from './Search';
-import { pindrop } from '../assets/icons';
+import { pindrop,pindropRed } from '../assets/icons';
 
 // Utility function to convert degrees to radians
 const toRadians = (degrees) => degrees * (Math.PI / 180);
@@ -32,6 +32,7 @@ const metersToFeet = (meters) => meters * 3.28084;
 const Narrative = ({
 	handleAddNewLine,
 	coordinates = [], // Default to an empty array
+	coordinatesPoints = [],
 	glowingLineIndex,
 	isDrawingEnabled,
 	mapRef,
@@ -40,7 +41,7 @@ const Narrative = ({
 	lineLength,
 	options,
 	handleAddNewPoint,
-	handleFetchPointData,
+	handleFetchPointAddress,
 	pindrops,
 }) => {
 	const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
@@ -50,18 +51,11 @@ const Narrative = ({
 	const [popupData, setPopupData] = useState([]); // State for popup data
 	const [selectedPoint, setSelectedPoint] = useState(null);
 	const [selectedOption, setSelectedOption] = useState("");
-	const [markers, setMarkers] = useState([]); // Store multiple markers
+	const [newMarkers, setNewMarkers] = useState([]); // Store newly placed markers
 
 	useEffect(() => {
 		lineLengthRef.current = lineLength;
 	}, [lineLength]);
-
-	useEffect(() => {
-		if (!pindrops) {
-			// Clear all markers if pindrops is false
-			setMarkers([]); // Clear marker state
-		}
-	}, [pindrops]);
 
 	const calculatePolylineLengthInFeet = (latlngs) => {
 		let totalLengthInMeters = 0;
@@ -71,19 +65,22 @@ const Narrative = ({
 		return metersToFeet(totalLengthInMeters);
 	};
 
-	const handleDropdownSelect = (value) => {
-		setSelectedOption(value);
 
-		// Automatically submit the selected option along with the selected point
+	const handleDropdownSelect = (value, markerToRemove) => {
+		setSelectedOption(value);
 		if (selectedPoint && value) {
 			const newPoint = {
 				coordinates: selectedPoint,
-				option: value,  // Submit the selected option
+				option: value,
 			};
 			handleAddNewPoint(newPoint, value);
+
+			// Remove the marker from the newMarkers array
+			setNewMarkers((prevMarkers) =>
+				prevMarkers.filter((marker) => marker.coordinates !== markerToRemove)
+			);
 		}
 	};
-
 	const _created = async (e) => {
 		if (e.layerType === 'polyline') {
 			const { _latlngs } = e.layer;
@@ -97,20 +94,18 @@ const Narrative = ({
 			} else {
 				handleAddNewLine({ coordinates: _latlngs, length: drawnLineLengthInFeet });
 			}
-		} else if (e.layerType === 'marker') {
-			const pointCoordinates = e.layer.getLatLng(); // Get the point's coordinates
-		setSelectedPoint(pointCoordinates); // Save point for rendering popup
-
-		// Fetch point data from the backend or another function
-		const data = await handleFetchPointData({ coordinates: [pointCoordinates.lat, pointCoordinates.lng] });
-
-		if (data) {
-			setPopupData(data); // Set the data to state for rendering dropdown
-			setMarkers((prevMarkers) => [
-				...prevMarkers,
-				{ coordinates: pointCoordinates, popupData: data, markerLayer: e.layer },
-			]);
-		}
+		}else if (e.layerType === 'marker') {
+			const pointCoordinates = e.layer.getLatLng();
+			setSelectedPoint(pointCoordinates);
+			const data = await handleFetchPointAddress({ coordinates: [pointCoordinates.lat, pointCoordinates.lng] });
+			if (data) {
+				setPopupData(data);
+				// Add new marker to the newMarkers state
+				setNewMarkers((prevMarkers) => [
+					...prevMarkers,
+					{ coordinates: pointCoordinates, popupData: data },
+				]);
+			}
 		}
 	};
 
@@ -127,16 +122,26 @@ const Narrative = ({
 			}
 		}
 	};
-
-	// Filter coordinates only if `coordinates` exists and has a valid structure.
-	const filteredCoordinates = Array.isArray(coordinates)
-		? options === 'lines'
-			? coordinates.filter(item => item.type === 'line')
-			: options === 'points'
-				? coordinates.filter(item => item.type === 'point')
-				: []
+	;
+	const filteredLines = Array.isArray(coordinates) && options === 'lines'
+		? coordinates.filter(item => item.type === 'line')
 		: [];
 
+	const filteredPoints = Array.isArray(coordinatesPoints) && options === 'points'
+		? coordinatesPoints.filter(item => item.type === 'point')
+		: [];
+
+		const getCustomIcon = (isGlowing) => {
+			const iconUrl = isGlowing 
+				? pindropRed// Red SVG
+				: pindrop; // Original icon
+		
+			return L.icon({
+				iconUrl: iconUrl,
+				iconSize: [35, 35], // Size of the icon
+				iconAnchor: [17.5, 35], // Point of the icon which will correspond to marker's location
+			});
+		};
 	return (
 		<div id="narrative" className="h-screen pt-14">
 			<MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-full z-10">
@@ -164,33 +169,49 @@ const Narrative = ({
 				)}
 				<TileLayer url={tileLayer.url} attribution={tileLayer.attribution} />
 
-				{/* Render Markers Only If pindrops is True */}
-				{pindrops && markers.map((marker, index) => (
-					<Marker key={`${marker.coordinates.lat}-${marker.coordinates.lng}-${index}`} position={marker.coordinates}>
-						<Popup>
-							<div>
-								<h3>Select an Option</h3>
-								<select onChange={(e) => handleDropdownSelect(e.target.value)}>
-									<option value="">Select option</option>
-									{Array.isArray(marker.popupData) && marker.popupData.map((item, idx) => (
-										<option key={idx} value={item}>
-											{item}
-										</option>
-									))}
-								</select>
-							</div>
-						</Popup>
-					</Marker>
-				))}
-
+				{options === 'points' && (
+		<LayerGroup>
+			{newMarkers.map((marker, index) => (
+				<Marker key={`${marker.coordinates.lat}-${marker.coordinates.lng}-${index}`} position={marker.coordinates} icon={customIcon}>
+					<Popup>
+						<div>
+							<h3>Select an Option</h3>
+							<select onChange={(e) => handleDropdownSelect(e.target.value, marker.coordinates)}>
+								<option value="">Select option</option>
+								{Array.isArray(marker.popupData) && marker.popupData.map((item, idx) => (
+									<option key={idx} value={item}>{item}</option>
+								))}
+							</select>
+						</div>
+					</Popup>
+				</Marker>
+			))}
+		</LayerGroup>
+	)}
 				{/* Render lines */}
-				{options === 'lines' && Array.isArray(filteredCoordinates) && filteredCoordinates.map((line, index) => (
+				{options === 'lines' && Array.isArray(filteredLines) && filteredLines.map((line, index) => (
 					<Polyline
 						key={index}
 						positions={line.coordinates}
-						pathOptions={index === glowingLineIndex ? { color: 'red', weight: 6 } : { color: 'blue', weight: 3 }}
+						pathOptions={index === glowingLineIndex ? { color: 'red', weight: 6 } : { color: 'blue', weight: 3 }} // Change color based on glowingLineIndex
+				
 					/>
 				))}
+			{/* Render points */}
+			{options === 'points' && Array.isArray(filteredPoints) && filteredPoints.map((point, index) => (
+				<Marker
+					key={`point-${index}`}  // Unique key for each point
+					position={point.coordinates[0]}  // Assuming coordinates is an array with one point
+					icon={getCustomIcon(index === glowingLineIndex)}
+				>
+					<Popup>
+						<div>
+							<h3>Point Details</h3>
+							
+						</div>
+					</Popup>
+				</Marker>
+			))}
 			</MapContainer>
 			{/* Toast Container for Notifications */}
 			<ToastContainer containerId="narrative-toast-container" />

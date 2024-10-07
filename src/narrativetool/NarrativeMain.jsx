@@ -17,6 +17,8 @@ function NarrativeMain() {
 		TILE_LAYERS.OpenStreetMapUK
 	);
 	const [coordinates, setCoordinates] 			= useState([]); // State to hold coordinates
+	const [coordinatesPoints, setPointCoordinates] 			= useState([]); // State to hold coordinates
+	const [pointCoordinates, setNarrativePoints] 			= useState([]); // State to hold coordinates
 	const [glowingLineIndex, setGlowingLineIndex] 	= useState(null); // State to track the glowing line index
 	const [selectedProject, setSelectedProject] 	= useState("");
 	const [isDrawingEnabled, setIsDrawingEnabled] 	= useState(false);
@@ -31,6 +33,8 @@ function NarrativeMain() {
 		workPrintPoint: "",
 		radius: "",
 		locationDirection: "",
+		pointType:"",
+		pointNote:"",
 	});
 
 	const location 									= geolocation(); // Use the geolocation hook
@@ -56,6 +60,7 @@ function NarrativeMain() {
 	const mapRef 									= useRef();
 	const selectedProjectRef 						= useRef(selectedProject);
 	const latestShowPinsRef 						= useRef(showPins);
+	const latestOption								=useRef(options)
 
 
 	// Sync selectedProject state with the ref
@@ -123,6 +128,28 @@ function NarrativeMain() {
 		}
 	};
 
+	const LocatePoint = (pointCoordinates, index) => {
+		if (pointCoordinates.length > 0) {
+			const map = mapRef.current;
+			if (map) {
+				const midpoint = pointCoordinates.reduce((acc, coord) => {
+					acc.lat += coord.lat;
+					acc.lng += coord.lng;
+					return acc;
+				}, { lat: 0, lng: 0 });
+
+				midpoint.lat /= pointCoordinates.length;
+				midpoint.lng /= pointCoordinates.length;
+
+				map.flyTo([midpoint.lat, midpoint.lng], _ZOOM_LEVEL, { animate: true });
+				setGlowingLineIndex(index);
+			}
+		} else {
+			toast.error("No line coordinates available.", { toastId: 'locateLineError', containerId: 'narrativeMain-toast-container' });
+		}
+	};
+
+
 	const handleShowLocation = () => {
 		const map = mapRef.current;
 	
@@ -146,35 +173,42 @@ function NarrativeMain() {
 		}
 	};
 
-	const parseCoordinates = (lineAsText) => {
+	const parseCoordinates = (text) => {
 		try {
-			if (!lineAsText) {
-				throw new Error("Line text is null or undefined");
+			if (!text) {
+				throw new Error("Text is null or undefined");
 			}
 			let parsed;
-			if (typeof lineAsText === "string") {
+			if (typeof text === "string") {
 				try {
-					parsed = JSON.parse(lineAsText);
+					parsed = JSON.parse(text);
 				} catch (jsonError) {
-					throw new Error("Line text is not a valid JSON string");
+					throw new Error("Text is not a valid JSON string");
 				}
 			} else {
-				parsed = lineAsText;
+				parsed = text;
 			}
-
-			if (!Array.isArray(parsed)) {
-				throw new Error("Parsed line text is not an array");
+	
+			// Check if it's a single coordinate object (e.g., for a point)
+			if (parsed.lat !== undefined && parsed.lng !== undefined) {
+				return [{ lat: parsed.lat || parsed.latitude, lng: parsed.lng || parsed.longitude }];
 			}
-
-			return parsed.map((coord) => ({
-				lat: coord.lat || coord.latitude,
-				lng: coord.lng || coord.longitude,
-			}));
+	
+			// Check if it's an array of coordinates (e.g., for lines)
+			if (Array.isArray(parsed)) {
+				return parsed.map((coord) => ({
+					lat: coord.lat || coord.latitude,
+					lng: coord.lng || coord.longitude,
+				}));
+			}
+	
+			throw new Error("Parsed text is neither a single coordinate nor an array");
 		} catch (error) {
+			console.error("Error parsing coordinates:", error.message);
 			return [];
 		}
 	};
-
+	
 	const handleFetchData = async () => {
 		const currentProject = selectedProjectRef.current;  // Use ref to get the latest project
 
@@ -215,17 +249,67 @@ function NarrativeMain() {
 			});
 		}
 	};
+	const handleFetchPointData = async () => {
+	const currentProject = selectedProjectRef.current;
 
-	const handleFetchPointData = async (newPoint) => {
+	try {
+		const response = await axios.post(
+			"https://www.corelineengineering.com/php/nar_p_checks.php",
+			{
+				USERNAME: username,
+				PROJECT: currentProject,
+			}
+		);
+
+		if (Array.isArray(response.data)) {
+			// Filter points that have a non-empty, non-null timestamp
+			const parsedPoints = response.data
+				.filter((point) => point.timestamp && point.timestamp !== "" && point.timestamp !== null)
+				.map((point) => ({
+					...point,
+					coordinates: parseCoordinates(point.point_as_text), // Parse point_as_text
+				}));
+
+			setNarrativePoints((prevPoints) => ({
+				...prevPoints,
+				[currentProject]: parsedPoints, // Update state by project
+			}));
+			
+
+			const coordinates = parsedPoints.map((point) => ({
+				type:'point',
+
+				coordinates: point.coordinates || [],
+			}));
+			
+			setPointCoordinates(coordinates);
+		} else {
+			toast.error("Fetched data is not in the expected format.", {
+				toastId: "fetchDataFormatError",
+				containerId: "narrativeMain-toast-container",
+			});
+		}
+	} catch (error) {
+		toast.error("Error caught when fetching point data", {
+			toastId: "fetchDataError",
+			containerId: "narrativeMain-toast-container",
+		});
+	}
+};
+
+	
+	  
+	const handleFetchPointAddress = async (newPoint) => {
 		const { coordinates } = newPoint;
+
 		try {
 			const [LAT, LON] = coordinates;
+			
 			const response = await axios.post(
 				"https://www.corelineengineering.com/php/addr_list_fetch.php",
 				{ LAT, LON }
 			);
 
-	
 			if (Array.isArray(response.data)) {
 				return response.data; // Return the fetched data instead of setting it in state
 			} else {
@@ -235,7 +319,7 @@ function NarrativeMain() {
 				});
 			}
 		} catch (error) {
-			toast.error("Error caught when fetching data", {
+			toast.error("Error caught when fetching address data", {
 				toastId: "fetchDataError",
 				containerId: 'narrativeMain-toast-container'
 			});
@@ -267,15 +351,20 @@ function NarrativeMain() {
 					// inputs
 					ADDRESS: address,
 					POINT_DATA: coordinates,
-					POINT_TYPE: latestPointData.pointName,
+					POINT_NAME: latestPointData.pointName,
 					WORK_PRINTS: latestPointData.workPrintPoint,
 					NARRATIVE_RADIUS: latestPointData.radius,
+					NARRATIVE_SUFFIX: latestPointData.pointNote,
+					POINT_TYPE: latestPointData.pointType,
+					
+
+
 				}
 			);
 
-	
 			if (response.data === "_S") {
 				handleFetchData();  // Ensure fetching is for the current project
+				handleFetchPointData();
 				setProjectLines((prevLines) => ({
 					...prevLines,
 					[currentProject]: [
@@ -287,6 +376,9 @@ function NarrativeMain() {
 					...prevCoordinates,
 					coordinates,
 				]);
+				toast.success("Point created successfully", {
+					containerId: "pointCreateToastContainer",
+				});
 			}
 		} catch (error) {
 			toast.error("Error caught when submitting point", { toastId: "submitLineError", containerId: 'narrativeMain-toast-container' });
@@ -353,6 +445,7 @@ function NarrativeMain() {
 		}
 	};
 
+
 	return (
 		<main id="NarrativeMain" className="overflow-hidden h-screen ">
 			<MapToolbar
@@ -370,11 +463,14 @@ function NarrativeMain() {
 					setSelectedProject=		{setSelectedProject}
 					selectedProject=		{selectedProject}
 					projectLines=			{projectLines}
+					pointCoordinates =		{pointCoordinates}
 					setCoordinates=			{setCoordinates}
+					setNarrativePoints=     {setNarrativePoints}
 					handleFetchData=		{handleFetchData}
 					setLocateType=			{setLocateType}
 					setLineName=			{setLineName}
 					LocateLine=				{LocateLine}
+					LocatePoint =			{LocatePoint}
 					lineName=				{lineName}
 					locateType=				{locateType}
 					setLineLength=			{setLineLength}
@@ -388,9 +484,11 @@ function NarrativeMain() {
 					workPrints=				{workPrints}
 					setPointData=			{setPointData}
 					pointData=				{pointData}
+					handleFetchPointData = {handleFetchPointData}
 				/>
 				<Narrative className="h-full "
 					projectLines=			{projectLines}
+					coordinatesPoints=      {coordinatesPoints}
 					coordinates=			{coordinates}
 					glowingLineIndex=		{glowingLineIndex}
 					setGlowingLineIndex=	{setGlowingLineIndex}
@@ -403,8 +501,9 @@ function NarrativeMain() {
 					options=				{options}
 					LocateLine=				{LocateLine}
 					handleAddNewPoint=		{handleAddNewPoint}
-					handleFetchPointData=   {handleFetchPointData}
+					handleFetchPointAddress=   {handleFetchPointAddress}
 					pindrops=				{showPins}
+					handleFetchPointData = {handleFetchPointData}
 
 				/>
 			</div>
