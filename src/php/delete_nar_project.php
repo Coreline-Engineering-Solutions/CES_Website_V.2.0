@@ -18,7 +18,7 @@
 
     include "connections.php";
 
-    // Normal form  for check on logon
+    // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Get the raw POST data
         $rawData = file_get_contents('php://input');
@@ -28,22 +28,26 @@
         $uname = $postData['USERNAME'];
         $project = $postData['PROJECT'];
 
-        try {
-            $sql="SELECT point_as_text, hyperlink, narative, timestamp, type FROM website.nar_point WHERE username=:value AND active_session = 'active' AND job_reference = :project ";
-            $stmnt=$pdo->prepare($sql);
-            $stmnt->execute([':value' => $uname, ':project' => $project]);
-            $data = $stmnt->fetchAll(PDO::FETCH_ASSOC);
-        
-            // Return the data as JSON
-            header('Content-Type: application/json');
-            echo json_encode($data);
-        } catch(PDOException $e) {
-            header('Content-Type: application/json');
-            echo json_encode(['error' => $e->getMessage()]);
-        }
+            try {
+                // Prepare SQL statement
+                $sql = "DELETE FROM website.user_job_references WHERE username = :user_name and job_reference = :project ";
+                $stmt = $pdo->prepare($sql);
+
+                // Bind parameters
+                $stmt->bindParam(':user_name', $uname);
+                $stmt->bindParam(':project', $project);
+                // Execute the statement
+                $stmt->execute();
+
+                // Success response
+                echo '_S';
+            } catch (PDOException $e) {
+                // Handle SQL execution error
+                echo 'Error: ' . $e->getMessage();
+            }
     } else {
-        header('Content-Type: application/json');
-        echo json_encode(['error' => 'Not a POST request']);
+        echo '_F';
     }
 
+    
 ?>
