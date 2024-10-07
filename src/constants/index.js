@@ -19,7 +19,7 @@ export const layers = [
 
 
 export const DashboardServices = [
-    { path: "/narrativemain", icon: Chat, label: "Narrative Tool", description: "Create and edit narratives effortlessly." , ind: 1 },
+    { path: "/NarrativeMain", icon: Chat, label: "Narrative Tool", description: "Create and edit narratives effortlessly." , ind: 1 },
     { path: "#gis", icon: Maptool, label: "GIS System", description: "Analyze geographic data seamlessly." , ind: 0},
     { path: "#feasability", icon: ToolIcon2, label: "Feasibility", description: "Evaluate project feasibility quickly.", ind: 0  },
     { path: "#coming", icon: Progress, label: "COMING SOON", description: "Stay tuned for new features!" , ind: 0 }

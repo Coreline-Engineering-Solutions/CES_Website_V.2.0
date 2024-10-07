@@ -9,8 +9,9 @@ import DashBoard from './DashBoard/DashBoard.jsx';
 import Verification from './sections/Verification.jsx';
 import Register from './sections/Register.jsx';
 import VerifyEmail from './sections/VerifyEmail.jsx';
-import PassReset from './sections/PasswordReset.jsx';
+import PassReset from './sections/PassReset.jsx';
 import NarrativeMain from './narrativetool/NarrativeMain.jsx';
+import PassVerify from './sections/PassVerify.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route exact path="/VerifyEmail" element={<VerifyEmail />} />
                 <Route exact path="/PassReset" element={<PassReset />} />
                 <Route exact path="/NarrativeMain" element={<NarrativeMain />} />
+                <Route exact path="/PassVerify" element={<PassVerify />} />
                 {/* Add more routes as needed */}
             </Routes>
         </Router>

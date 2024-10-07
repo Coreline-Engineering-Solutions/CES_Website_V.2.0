@@ -1,66 +1,208 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, FeatureGroup, Polyline } from 'react-leaflet';
+import { useRef, useState, useEffect } from 'react';
+import { MapContainer, TileLayer, FeatureGroup, Polyline, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { marker_map } from '../assets/icons';
-import { EditControl } from "react-leaflet-draw";
+import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import { useLocation } from 'react-router-dom';
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { TILE_LAYERS } from './map_tile_provider';
 import Search from './Search';
+import { pindrop } from '../assets/icons';
 
-const Narrative = ({ handleAddNewLine, projectLines, coordinates, glowingLineIndex, setGlowingLineIndex, isDrawingEnabled,mapRef,tileLayer,showPins }) => {
-  const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
-  const UserLocation = useLocation();
-  const _ZOOM_LEVEL = 18;
+// Utility function to convert degrees to radians
+const toRadians = (degrees) => degrees * (Math.PI / 180);
 
-  const _created = (e) => {
-    if (e.layerType === 'polyline') {
-        const { _latlngs } = e.layer;
-        handleAddNewLine({ coordinates: _latlngs });
-    }
+// Utility function to calculate distance between two lat/lng points in meters
+const calculateDistanceInMeters = (latlng1, latlng2) => {
+	const R = 6371000; // Earth radius in meters
+	const dLat = toRadians(latlng2.lat - latlng1.lat);
+	const dLng = toRadians(latlng2.lng - latlng1.lng);
+	const a =
+		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.cos(toRadians(latlng1.lat)) * Math.cos(toRadians(latlng2.lat)) *
+		Math.sin(dLng / 2) * Math.sin(dLng / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	const distance = R * c; // Distance in meters
+	return distance;
 };
-  return (
-    <div id='narrative' className="h-screen pt-20 ">
-      <MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-full z-10">
-        <Search enablePinDrops={showPins}/>
-        {isDrawingEnabled && (
-          <FeatureGroup>
-            <EditControl
-              position="topleft"
-              onCreated={_created}
-              draw={{
-                rectangle: false,
-                circle: false,
-                circlemarker: false,
-                marker: false,
-                polygon: false,
-                polyline: {
-                  metric: false,
-                },
-              }}
-              edit={{
-                edit:false,
-                remove: false,
-              }}
-            />
-          </FeatureGroup>
-        )}
-        <TileLayer url={tileLayer.url} attribution={tileLayer.attribution} />
-        {coordinates.map((line, index) => (
-          <Polyline
-            key={index}
-            positions={line}
-            pathOptions={index === glowingLineIndex ? { color: 'red', weight: 4 } : { color: 'blue', opacity: 0.7 }}
-          />
-        ))}
-      </MapContainer>
-      <ToastContainer />
-    </div>
-  );
+
+// Utility function to convert meters to feet
+const metersToFeet = (meters) => meters * 3.28084;
+
+const Narrative = ({
+	handleAddNewLine,
+	coordinates = [], // Default to an empty array
+	glowingLineIndex,
+	isDrawingEnabled,
+	mapRef,
+	tileLayer,
+	showPins,
+	lineLength,
+	options,
+	handleAddNewPoint,
+	handleFetchPointData,
+	pindrops,
+}) => {
+	const [center, setCenter] = useState({ lat: -33.9249, lng: 18.4241 });
+	const _ZOOM_LEVEL = 18;
+	const lineLengthRef = useRef(lineLength);
+	const [currentLength, setCurrentLength] = useState(null); // State to track current length in feet
+	const [popupData, setPopupData] = useState([]); // State for popup data
+	const [selectedPoint, setSelectedPoint] = useState(null);
+	const [selectedOption, setSelectedOption] = useState("");
+	const [markers, setMarkers] = useState([]); // Store multiple markers
+
+	useEffect(() => {
+		lineLengthRef.current = lineLength;
+	}, [lineLength]);
+
+	useEffect(() => {
+		if (!pindrops) {
+			// Clear all markers if pindrops is false
+			setMarkers([]); // Clear marker state
+		}
+	}, [pindrops]);
+
+	const calculatePolylineLengthInFeet = (latlngs) => {
+		let totalLengthInMeters = 0;
+		for (let i = 0; i < latlngs.length - 1; i++) {
+			totalLengthInMeters += calculateDistanceInMeters(latlngs[i], latlngs[i + 1]);
+		}
+		return metersToFeet(totalLengthInMeters);
+	};
+
+	const handleDropdownSelect = (value) => {
+		setSelectedOption(value);
+
+		// Automatically submit the selected option along with the selected point
+		if (selectedPoint && value) {
+			const newPoint = {
+				coordinates: selectedPoint,
+				option: value,  // Submit the selected option
+			};
+			handleAddNewPoint(newPoint, value);
+		}
+	};
+
+	const _created = async (e) => {
+		if (e.layerType === 'polyline') {
+			const { _latlngs } = e.layer;
+			const latestLineLength = lineLengthRef.current;
+
+			const drawnLineLengthInFeet = calculatePolylineLengthInFeet(_latlngs);
+
+			if (latestLineLength && drawnLineLengthInFeet > latestLineLength) {
+				toast.error(`Line length exceeds the maximum allowed length of ${latestLineLength} feet.`, { containerId: 'narrative-toast-container' });
+				e.layer.remove(); // Remove the line from the map
+			} else {
+				handleAddNewLine({ coordinates: _latlngs, length: drawnLineLengthInFeet });
+			}
+		} else if (e.layerType === 'marker') {
+			const pointCoordinates = e.layer.getLatLng(); // Get the point's coordinates
+		setSelectedPoint(pointCoordinates); // Save point for rendering popup
+
+		// Fetch point data from the backend or another function
+		const data = await handleFetchPointData({ coordinates: [pointCoordinates.lat, pointCoordinates.lng] });
+
+		if (data) {
+			setPopupData(data); // Set the data to state for rendering dropdown
+			setMarkers((prevMarkers) => [
+				...prevMarkers,
+				{ coordinates: pointCoordinates, popupData: data, markerLayer: e.layer },
+			]);
+		}
+		}
+	};
+
+	const _onDrawUpdate = (e) => {
+		if (e.layerType === 'polyline') {
+			const { _latlngs, _tooltip } = e.layer;
+			const drawnLineLengthInFeet = calculatePolylineLengthInFeet(_latlngs);
+
+			setCurrentLength(drawnLineLengthInFeet);
+
+			if (_tooltip) {
+				const tooltipContent = `${drawnLineLengthInFeet.toFixed(2)} ft. Click to continue drawing line.`;
+				_tooltip.updateContent({ text: tooltipContent });
+			}
+		}
+	};
+
+	// Filter coordinates only if `coordinates` exists and has a valid structure.
+	const filteredCoordinates = Array.isArray(coordinates)
+		? options === 'lines'
+			? coordinates.filter(item => item.type === 'line')
+			: options === 'points'
+				? coordinates.filter(item => item.type === 'point')
+				: []
+		: [];
+
+	return (
+		<div id="narrative" className="h-screen pt-14">
+			<MapContainer center={center} zoom={_ZOOM_LEVEL} ref={mapRef} className="h-full z-10">
+				<Search enablePinDrops={showPins} />
+				{isDrawingEnabled && (
+					<FeatureGroup>
+						<EditControl
+							position="topleft"
+							onCreated={_created}
+							onDrawUpdate={_onDrawUpdate}
+							draw={{
+								rectangle: false,
+								circle: false,
+								circlemarker: false,
+								marker: options === 'points', // Enable marker if 'points' option
+								polygon: false,
+								polyline: options === 'lines' ? { metric: false, feet: true } : false,
+							}}
+							edit={{
+								edit: false,
+								remove: false,
+							}}
+						/>
+					</FeatureGroup>
+				)}
+				<TileLayer url={tileLayer.url} attribution={tileLayer.attribution} />
+
+				{/* Render Markers Only If pindrops is True */}
+				{pindrops && markers.map((marker, index) => (
+					<Marker key={`${marker.coordinates.lat}-${marker.coordinates.lng}-${index}`} position={marker.coordinates}>
+						<Popup>
+							<div>
+								<h3>Select an Option</h3>
+								<select onChange={(e) => handleDropdownSelect(e.target.value)}>
+									<option value="">Select option</option>
+									{Array.isArray(marker.popupData) && marker.popupData.map((item, idx) => (
+										<option key={idx} value={item}>
+											{item}
+										</option>
+									))}
+								</select>
+							</div>
+						</Popup>
+					</Marker>
+				))}
+
+				{/* Render lines */}
+				{options === 'lines' && Array.isArray(filteredCoordinates) && filteredCoordinates.map((line, index) => (
+					<Polyline
+						key={index}
+						positions={line.coordinates}
+						pathOptions={index === glowingLineIndex ? { color: 'red', weight: 6 } : { color: 'blue', weight: 3 }}
+					/>
+				))}
+			</MapContainer>
+			{/* Toast Container for Notifications */}
+			<ToastContainer containerId="narrative-toast-container" />
+
+			{/* Display Current Line Length */}
+			{currentLength && (
+				<div className="length-display">
+					Current Length: {currentLength.toFixed(2)} feet
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default Narrative;
-

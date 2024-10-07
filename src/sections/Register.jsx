@@ -57,7 +57,7 @@ function Register() {
         e.preventDefault();
 
         if (!validateForm()) {
-            toast.error('Please correct the errors in the form.');
+            toast.error('Please correct the errors in the form.',{ toastId: 'register-Error', containerId: 'register-toast-container' });
             return;
         }
 
@@ -79,16 +79,16 @@ function Register() {
             const result = response.data;
 
             if (result === '_S') {
-                toast.success('Registration successful! Please check your email for a verification code.');
+                toast.success('Registration successful! Please check your email for a verification code.',{ toastId: 'register-successs', containerId: 'register-toast-container' });
                 navigate('/Verification'); // Ensure this rouwte exists
                 setRegisterResult(''); // Reset RegisterResult after successful registration
             } else {
-                toast.error('Registration failed. Please try again.');
+                toast.error('Registration failed. Please try again.',{ toastId: 'register-failed-Error', containerId: 'register-toast-container' });
                 setRegisterResult(''); // Reset RegisterResult after displaying error message
             }
             setRegisterResult(result);
         } catch (error) {
-            toast.error('An error occurred during registration. Please try again.');
+            toast.error('An error occurred during registration. Please try again.',{ toastId: 'register-Error', containerId: 'register-toast-container' });
         }
 
     };
@@ -193,7 +193,8 @@ function Register() {
                         <a href="mailto:info@corelineengineering.com?subject=Contact%20Us" className="hover:underline">Contact Us</a>
                     </p>
                 </form>
-                <ToastContainer />
+                <ToastContainer containerId="register-toast-container" position="bottom-right" autoClose={3000} hideProgressBar={true} />
+
             </div>
         </div>
     );

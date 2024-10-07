@@ -1,4 +1,6 @@
 import React from "react";
+import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const ProjectSelection = ({
     selection,
@@ -8,20 +10,54 @@ const ProjectSelection = ({
     projectDescription,
     setProjectDescription,
     existingProjects,
+    selectedProject, // Added selectedProject to track the active project
     setSelectedProject,
     CreateProject,
     handleOpenProject,
-    selectedProject,
+    deleteProject,
+    fetchProjects,
+    handleFetchData,
 }) => {
+
 
     const handleCreateAndFetch = () => {
         CreateProject();
     };
 
-    const handleProjectSelect = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedProject(selectedValue);
-        handleOpenProject(selectedValue);
+    const handleProjectSelect = (project) => {
+        // Clear any previous project data before setting the new project
+        setSelectedProject(null);
+
+        // Ensure the new project is set
+        setSelectedProject(project.job_reference);
+        handleOpenProject(project.job_reference);
+
+        // Wait until the selected project is set, then fetch its data
+        setTimeout(() => {
+            handleFetchData();
+        }, 0); // This ensures fetch happens after project state is updated
+    };
+
+    const handleDeleteProject = (projectReference) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This project will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#00309e',
+            cancelButtonColor: 'red',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteProject(projectReference);
+                fetchProjects();
+                Swal.fire(
+                    'Deleted!',
+                    'Your project has been deleted.',
+                    'success'
+                );
+            }
+        });
     };
 
     return (
@@ -67,17 +103,28 @@ const ProjectSelection = ({
             )}
             {selection === "open" && (
                 <div className="w-full mb-4">
-                    <select
-                        className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                        onChange={handleProjectSelect}
-                    >
-                        <option value="">Select a project</option>
+                    <div className="space-y-2">
                         {existingProjects.map((project) => (
-                            <option key={project.job_reference} value={project.job_reference}>
-                                {project.job_reference} - {project.job_description}
-                            </option>
+                            <div
+                                key={project.job_reference}
+                                className={`flex items-center justify-between p-2 rounded-lg shadow-sm border hover:bg-gray-100 cursor-pointer ${
+                                    selectedProject === project.job_reference ? 'bg-blue-200 border-blue-500' : 'bg-white'
+                                }`}
+                                onClick={() => handleProjectSelect(project)}
+                            >
+                                <div>
+                                    <span className="font-medium">{project.job_reference}</span> - {project.job_description}
+                                </div>
+                                <FaTrash
+                                    className="text-red-500 hover:text-red-700"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteProject(project.job_reference);
+                                    }}
+                                />
+                            </div>
                         ))}
-                    </select>
+                    </div>
                 </div>
             )}
         </div>

@@ -1,74 +1,292 @@
-import React from "react";
-import { FaDownload, FaTrash} from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaDownload, FaTrash } from "react-icons/fa";
 import { radioMap } from "../constants";
 import { ToggleSwitch } from "../components";
 
-const ProjectDetails = ({ projectDetails, handleOpenNarrative, handleClearSession, handleDownloadCSV, setLocateType, setLineName,lineName,locateType,onToggle }) => {
+const ProjectDetails = ({
+    projectDetails,
+    handleClearSession,
+    setLocateType,
+    setLineName,
+    lineName,
+    locateType,
+    onToggle,
+    lineLength,
+    setLineLength,
+    setWorkPrint,
+    handleDownloadExcel,
+    onToggleChange, // New prop to handle the toggles state change
+    onSelectedOptionChange, // New prop to handle the selected option state change
+    stateToggles,
+    stateOptions,
+    workPrints,
+    setPointData,
+    pointData,
+}) => {
+    const [selectedOption, setSelectedOption] = useState(""); // State to manage the selected option
+    const [toggles, setToggles] = useState({
+        Note_intersection_at_start: false,
+        Note_intersection_at_end: false,
+        Note_address_at_start: false,
+        Note_address_at_end: false,
+        Include_GPS_at_start: false,
+        Include_GPS_at_end: false,
+        Include_GPS_at_bearing: false,
+        // Split_on_max_length: false,
+    });
+
+    const [localWorkPrint, setLocalWorkPrint] = useState(workPrints || "");
+
+    // Update the component's state whenever props change
+    useEffect(() => {
+        if (stateToggles) setToggles(stateToggles);
+        if (stateOptions) setSelectedOption(stateOptions);
+        if (workPrints) setLocalWorkPrint(workPrints);
+    }, [stateToggles, stateOptions, workPrints]);
+
+    const handleToggle = (key) => {
+        setToggles((prevToggles) => {
+            const updatedToggles = {
+                ...prevToggles,
+                [key]: !prevToggles[key],
+            };
+            onToggleChange(updatedToggles); // Send updated toggles to the parent
+            return updatedToggles;
+        });
+    };
+
+    //Narrative Lines data set
 
     const handleLocateTypeChange = (event) => {
         const locateType = event.target.value;
-		setLocateType(locateType);
-	};
+        setLocateType(locateType);
+    };
 
-	const handleLineNameChange = (event) => {
+    const handleLineNameChange = (event) => {
         const lineName = event.target.value;
-		setLineName(lineName);
-	};
+        setLineName(lineName);
+    };
+
+    const handleLineLengthChange = (event) => {
+        const lineLength = event.target.value;
+        setLineLength(lineLength);
+    };
+    
+    const handleWorkPrintChange = (event) => {
+        const workPrint = event.target.value;
+        setLocalWorkPrint(workPrint);
+        setWorkPrint(workPrint); // Update parent's workPrint state
+    };
+
+    //Narrative Point data set
+
+    const handlePointNameChange = (event) => {
+        const pointName = event.target.value;
+        setPointData({ ...pointData, pointName });
+    };
+
+    const handleWorkPrintPointChange = (event) => {
+        const workPrintPoint = event.target.value;
+        setPointData({ ...pointData, workPrintPoint });
+    };
+
+    const handleRadiusChange = (event) => {
+        const radius = event.target.value;
+        setPointData({ ...pointData, radius });
+    };
+    
+
+    const handleLocationDirectionChange = (event) => {
+        const locationDirection = event.target.value;
+        setPointData({ ...pointData, locationDirection });
+    };
+    const handleOptionChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedOption(selectedValue);
+        onSelectedOptionChange(selectedValue); // Send selected option to the parent
+    };
+
 
     return (
         <div className="w-full">
             <h2 className="bg-gray-100 p-4 text-xl font-bold mb-4">Project Details</h2>
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-semibold">{projectDetails?.job_reference}</p>
-                <p className="text-sm text-gray-600">{projectDetails?.job_description}</p>
-                <div className="flex flex-col space-y-4 mt-4">
-                    <div>
+                <p className="text-2xl font-bold text-[#00309e]  tracking-wide uppercase mb-2">
+                    TITLE: {projectDetails?.job_reference}
+                </p>
+                <p className="text-md text-gray-700 italic leading-relaxed transition-all duration-300">
+                    DESCRIPTION: {projectDetails?.job_description}
+                </p>
+                <div className="flex flex-row space-x-2 mt-4 p-3 bg-gray-200 rounded-lg shadow-md">
+                            <button
+                                className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-400 transition duration-200 items-center justify-center"
+                                onClick={handleClearSession}
+                                title="Clear Session"
+                            >
+                                <FaTrash className="text-2xl" />
+                            </button>
+                            <button
+                                className="bg-[#00309e] text-white p-3 rounded-lg hover:bg-blue-500 transition duration-200 items-center justify-center"
+                                onClick={handleDownloadExcel}
+                                title="Download Excel"
+                            >
+                                <FaDownload className="text-2xl" />
+                            </button>
+                            <ToggleSwitch onToggle={onToggle} />
+                        </div>
 
-                        <ToggleSwitch onToggle={onToggle}/>
-                        <label className="block text-gray-700">Locate Type:</label>
-                        <select
-                            id="downloadOption"
-                            value= {locateType} // Bind select value to locateType
-                            onChange={handleLocateTypeChange}
-                            className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                        >
-                            <option value="">Select an option</option> {/* Ensure there's a default option */}
-                            {radioMap.map((option, index) => (
-                                <option key={index} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-gray-700">Line Name:</label>
+                {/* Radio Buttons for Option Selection */}
+                <div className="flex space-x-4 mt-4">
+                    <label className="flex items-center space-x-2">
                         <input
-                            
-                            value= {lineName}
-                            className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                            placeholder="Enter line name"
-                            onChange={handleLineNameChange}
+                            type="radio"
+                            value="lines"
+                            checked={selectedOption === "lines"}
+                            onChange={handleOptionChange}
+                            className="form-radio"
                         />
-                    </div>
-                    <div className="flex space-x-2">
-                        <button
-                            className="w-full bg-red-500 text-white py-2 sm:py-3 rounded-lg hover:bg-red-400 transition duration-200 flex items-center justify-center space-x-2"
-                            onClick={handleClearSession}
-                        >
-                               <FaTrash className="mx-2" />
-                            Clear Session
-                        </button>
-                        <button
-                            className="w-full bg-[#00309e] text-white py-2 sm:py-3 rounded-lg hover:bg-blue-500 transition duration-200 flex items-center justify-center space-x-2"
-                            onClick={handleDownloadCSV}
-                        >
-                            <FaDownload className="mx-2" />
-                            Download CSV
-                        </button>
-                    </div>
-                </div>
-            </div>
+                        <span>Narrative Lines</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                        <input
+                            type="radio"
+                            value="points"
+                            checked={selectedOption === "points"}
+                            onChange={handleOptionChange}
+                            className="form-radio"
+                        />
+                        <span>Narrative Points</span>
+                    </label>
 
+                    {/* <label className="flex items-center space-x-2">
+                        <input
+                            type="radio"
+                            value="points"
+                            checked={selectedOption === "points"}
+                            onChange={handleOptionChange}
+                            className="form-radio"
+                        />
+                        <span>Narrative Points</span>
+                    </label> */}
+                </div>
+
+                            
+                {/* Conditionally Render Input Fields */}
+                {selectedOption === "lines" && (
+                    <div className="flex flex-col space-y-4 mt-4">
+                        <div>
+                            <label className="block text-gray-700">Locate Type:</label>
+                            <select
+                                id="downloadOption"
+                                value={locateType}
+                                onChange={handleLocateTypeChange}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                            >
+                                <option value="">Select an option</option>
+                                {radioMap.map((option, index) => (
+                                    <option key={index} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Line Name:</label>
+                            <input
+                                value={lineName}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter line name"
+                                onChange={handleLineNameChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Work Print</label>
+                            <input
+                                value={localWorkPrint}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter Work Print"
+                                onChange={handleWorkPrintChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Max Line Length</label>
+                            <label className="block text-xs text-gray-700">* If Applicable</label>
+                            <input
+                                type="number"
+                                value={lineLength}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter line length"
+                                onChange={handleLineLengthChange}
+                            />
+                        </div>
+                        {/* Display toggles dynamically */}
+                        {Object.keys(toggles).map((key) => (
+                            <div key={key} className="flex items-center justify-between space-x-4">
+                                <span>{key.replace(/_/g, ' ')}</span>
+                                <label className="flex items-center cursor-pointer">
+                                    <div className="relative">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only"
+                                            checked={toggles[key]}
+                                            onChange={() => handleToggle(key)}
+                                        />
+                                        <div
+                                            className={`w-10 h-4 rounded-full shadow-inner transition-colors duration-300 ${toggles[key] ? 'bg-[#00309e]' : 'bg-gray-300'}`}
+                                        ></div>
+                                        <div
+                                            className={`absolute w-6 h-6 rounded-full shadow -left-1 -top-1 transition-transform duration-300 ${toggles[key] ? 'transform translate-x-full bg-gray-200' : 'bg-gray-200'}`}
+                                        ></div>
+                                    </div>
+                                    <span className="ml-3">{toggles[key] ? 'Yes' : 'No'}</span>
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {selectedOption === "points" && (
+                    <div className="flex flex-col space-y-4 mt-4">
+                        <div>
+                            <label className="block text-gray-700">Point Name:</label>
+                            <input
+                                value={pointData.pointName}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter point name"
+                                onChange={handlePointNameChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Work Print</label>
+                            <input
+                                value={pointData.workPrintPoint}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter Work Print"
+                                onChange={handleWorkPrintPointChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Point Radius</label>
+                            <input
+                                type="number"
+                                value={pointData.radius}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter radius"
+                                onChange={handleRadiusChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Location/Direction:</label>
+                            <input
+                                value={pointData.locationDirection}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Enter location/direction"
+                                onChange={handleLocationDirectionChange}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
