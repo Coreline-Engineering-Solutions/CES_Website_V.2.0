@@ -17,8 +17,10 @@ const ProjectMain = ({
 	setSelectedProject,
 	selectedProject,
 	LocateLine,
+	LocatePoint,
 	handleFetchData,
 	projectLines,
+	pointCoordinates,
 	setLocateType,  // Add these props
 	setLineName,
 	lineName,
@@ -33,7 +35,8 @@ const ProjectMain = ({
 	options,
 	workPrints,
 	setPointData ,
-	pointData,				 
+	pointData,
+	handleFetchPointData,				 
 }) => {
 	const [selection, setSelection] 					= useState("");
 	const [projectName, setProjectName] 				= useState("");
@@ -54,6 +57,7 @@ const ProjectMain = ({
 		fetchProjects();
 		return;
 	}, []);
+
 	const fetchProjects = async () => {
 		try {
 			const response = await axios.post(
@@ -144,9 +148,15 @@ const ProjectMain = ({
 	},[existingProjects]);
 
 	const handleOpenNarrative = (narrative) => {
+
 		setModalContent(narrative);
 		setShowModal(true);
 	};
+
+	const handleOpenInfo = (narrative) => {
+		setModalContent(narrative);
+		setShowModal(true);
+	}
 
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -169,10 +179,39 @@ const ProjectMain = ({
 					prevLines.filter((prevLine) => prevLine.timestamp !== line.timestamp)
 				);
 				handleFetchData(); // Reload table
+				toast.success("Line deleted successfully", {
+					containerId: "projectToastContainer",
+				});
 			}
 		} catch (error) {
 			if (!toast.isActive("deleteLineError")) {
 				toast.error("Error caught when deleting line", { containerId: "projectToastContainer" });
+			}
+		}
+	};
+	const handleDeletePoint = async (point) => {
+		try {
+			const response = await axios.post(
+				"https://www.corelineengineering.com/php/nar_p_delete.php",
+				{
+					USERNAME: username,
+					PROJECT: selectedProject,
+					TIMESTAMP: point.timestamp,
+				}
+			);
+
+			if (response.data === "_S") {
+				setNarrativeLines((prevLines) =>
+					prevLines.filter((prevLine) => prevLine.timestamp !== point.timestamp)
+				);
+				handleFetchPointData(); // Reload table
+				toast.success("Point deleted successfully", {
+					containerId: "projectToastContainer",
+				});
+			}
+		} catch (error) {
+			if (!toast.isActive("deletePointError")) {
+				toast.error("Error caught when deleting point", { containerId: "projectToastContainer" });
 			}
 		}
 	};
@@ -412,6 +451,7 @@ const ProjectMain = ({
 						CreateProject=			{CreateProject}
 						handleOpenProject=		{handleOpenProject}
 						handleFetchData=		{handleFetchData}
+						handleFetchPointData = {handleFetchPointData}
 						deleteProject=			{deleteProject}
 						fetchProjects=			{fetchProjects}
 						selectedProject=		{selectedProject}
@@ -445,13 +485,18 @@ const ProjectMain = ({
 				{activeTab === "table" && (
 					<ProjectTable
 						narrativeLines={projectLines[selectedProject]}
+						narrativePoints={pointCoordinates[selectedProject]}
 						handleDeleteLine={handleDeleteLine}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
 						rowsPerPage={rowsPerPage}
 						handleOpenNarrative={handleOpenNarrative}
 						LocateLine={LocateLine}
+						LocatePoint={LocatePoint}
 						handleFetchData={handleFetchData}
+						handleFetchPointData = {handleFetchPointData}
+						handleDeletePoint = {handleDeletePoint}
+						handleOpenInfo = {handleOpenInfo}
 
 					/>
 

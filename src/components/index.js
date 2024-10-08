@@ -19,7 +19,6 @@ import MapEventsHandler from "../narrativetool/MapEventsHandler";
 import MapTileDropdown from "../narrativetool/MapTileDropdown";
 import Search from "../narrativetool/Search";
 import ScrollToTopButton from "./ScrollToTopButton";
-import ProjectSelector from "../narrativetool/MapProject";
 import ToggleSwitch from "./ToggleSwitch";
 
 export {
@@ -44,6 +43,5 @@ export {
   MapTileDropdown,
   Search,
   ScrollToTopButton,
-  ProjectSelector,
   ToggleSwitch,
 };

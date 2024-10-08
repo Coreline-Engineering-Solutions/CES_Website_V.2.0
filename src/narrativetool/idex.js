@@ -3,8 +3,6 @@ import MapToolbar from "./MapToolbar";
 import MapEventsHandler from "./MapEventsHandler";
 import MapTileDropdown from "./MapTileDropdown";
 import Search from "./Search";
-import ProjectSelector from "./MapProject";
-
 import ProjectDetails from "./ProjectDetails";
 import ProjectSelection from "./ProjectSelection";
 import ProjectTable from "./ProjectTable";

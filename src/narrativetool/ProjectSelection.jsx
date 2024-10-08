@@ -17,6 +17,7 @@ const ProjectSelection = ({
     deleteProject,
     fetchProjects,
     handleFetchData,
+    handleFetchPointData
 }) => {
 
 
@@ -35,6 +36,7 @@ const ProjectSelection = ({
         // Wait until the selected project is set, then fetch its data
         setTimeout(() => {
             handleFetchData();
+            handleFetchPointData();
         }, 0); // This ensures fetch happens after project state is updated
     };
 

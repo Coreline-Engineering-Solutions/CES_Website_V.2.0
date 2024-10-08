@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa";
-import { radioMap } from "../constants";
+import { radioMapPoints, radioMapLines } from "../constants";
 import { ToggleSwitch } from "../components";
 
 const ProjectDetails = ({
@@ -71,7 +71,7 @@ const ProjectDetails = ({
         const lineLength = event.target.value;
         setLineLength(lineLength);
     };
-    
+
     const handleWorkPrintChange = (event) => {
         const workPrint = event.target.value;
         setLocalWorkPrint(workPrint);
@@ -90,11 +90,20 @@ const ProjectDetails = ({
         setPointData({ ...pointData, workPrintPoint });
     };
 
+    const handlePointTypeChange = (event) => {
+        const pointType = event.target.value;
+        setPointData({ ...pointData, pointType });
+    };
+
+    const handleNoteChange = (event) => {
+        const pointNote = event.target.value;
+        setPointData({ ...pointData, pointNote });
+    };
+
     const handleRadiusChange = (event) => {
         const radius = event.target.value;
         setPointData({ ...pointData, radius });
     };
-    
 
     const handleLocationDirectionChange = (event) => {
         const locationDirection = event.target.value;
@@ -118,22 +127,22 @@ const ProjectDetails = ({
                     DESCRIPTION: {projectDetails?.job_description}
                 </p>
                 <div className="flex flex-row space-x-2 mt-4 p-3 bg-gray-200 rounded-lg shadow-md">
-                            <button
-                                className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-400 transition duration-200 items-center justify-center"
-                                onClick={handleClearSession}
-                                title="Clear Session"
-                            >
-                                <FaTrash className="text-2xl" />
-                            </button>
-                            <button
-                                className="bg-[#00309e] text-white p-3 rounded-lg hover:bg-blue-500 transition duration-200 items-center justify-center"
-                                onClick={handleDownloadExcel}
-                                title="Download Excel"
-                            >
-                                <FaDownload className="text-2xl" />
-                            </button>
-                            <ToggleSwitch onToggle={onToggle} />
-                        </div>
+                    <button
+                        className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-400 transition duration-200 items-center justify-center"
+                        onClick={handleClearSession}
+                        title="Clear Session"
+                    >
+                        <FaTrash className="text-2xl" />
+                    </button>
+                    <button
+                        className="bg-[#00309e] text-white p-3 rounded-lg hover:bg-blue-500 transition duration-200 items-center justify-center"
+                        onClick={handleDownloadExcel}
+                        title="Download Excel"
+                    >
+                        <FaDownload className="text-2xl" />
+                    </button>
+                    <ToggleSwitch onToggle={onToggle} />
+                </div>
 
                 {/* Radio Buttons for Option Selection */}
                 <div className="flex space-x-4 mt-4">
@@ -170,7 +179,7 @@ const ProjectDetails = ({
                     </label> */}
                 </div>
 
-                            
+
                 {/* Conditionally Render Input Fields */}
                 {selectedOption === "lines" && (
                     <div className="flex flex-col space-y-4 mt-4">
@@ -183,7 +192,7 @@ const ProjectDetails = ({
                                 className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                             >
                                 <option value="">Select an option</option>
-                                {radioMap.map((option, index) => (
+                                {radioMapLines.map((option, index) => (
                                     <option key={index} value={option.value}>
                                         {option.label}
                                     </option>
@@ -215,8 +224,21 @@ const ProjectDetails = ({
                                 type="number"
                                 value={lineLength}
                                 className="w-full border border-gray-300 p-2 rounded-lg mb-2"
-                                placeholder="Enter line length"
+                                placeholder="Enter radius"
                                 onChange={handleLineLengthChange}
+                                onKeyDown={(e) => {
+                                    // Prevent entering 'e', '+', '-', and other non-number characters
+                                    if (
+                                        e.key === 'e' ||
+                                        e.key === 'E' ||
+                                        e.key === '+' ||
+                                        e.key === '-' ||
+                                        e.key === '.'
+                                    ) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                min="0" // This will prevent negative numbers
                             />
                         </div>
                         {/* Display toggles dynamically */}
@@ -257,6 +279,22 @@ const ProjectDetails = ({
                             />
                         </div>
                         <div>
+                            <label className="block text-gray-700">Point Type:</label>
+                            <select
+                                id="downloadOption"
+                                value={pointData.pointType}
+                                onChange={handlePointTypeChange}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                            >
+                                <option value="">Select an option</option>
+                                {radioMapPoints.map((option, index) => (
+                                    <option key={index} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
                             <label className="block text-gray-700">Work Print</label>
                             <input
                                 value={pointData.workPrintPoint}
@@ -273,6 +311,19 @@ const ProjectDetails = ({
                                 className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                                 placeholder="Enter radius"
                                 onChange={handleRadiusChange}
+                                onKeyDown={(e) => {
+                                    // Prevent entering 'e', '+', '-', and other non-number characters
+                                    if (
+                                        e.key === 'e' ||
+                                        e.key === 'E' ||
+                                        e.key === '+' ||
+                                        e.key === '-' ||
+                                        e.key === '.'
+                                    ) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                min="0" // This will prevent negative numbers
                             />
                         </div>
                         <div>
@@ -282,6 +333,15 @@ const ProjectDetails = ({
                                 className="w-full border border-gray-300 p-2 rounded-lg mb-2"
                                 placeholder="Enter location/direction"
                                 onChange={handleLocationDirectionChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Point Note:</label>
+                            <input
+                                value={pointData.pointNote}
+                                className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+                                placeholder="Prefix/Suffix"
+                                onChange={handleNoteChange}
                             />
                         </div>
                     </div>
