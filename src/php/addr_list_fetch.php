@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Construct the Google Geocoding API URL
         $googleApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng={$latitude},{$longitude}&key=AIzaSyDjBixCluMxpTyIbqp7mWs88Q2fnTuobYk";
+        
 
         // Initialize cURL
         $ch = curl_init();
