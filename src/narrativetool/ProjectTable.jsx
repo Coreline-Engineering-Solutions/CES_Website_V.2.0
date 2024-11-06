@@ -77,7 +77,7 @@ const ProjectTable = ({
                                 <th className="p-2 border border-gray-300">Narrative</th>
                                 <th className="p-2 border border-gray-300">Delete</th>
                                 <th className="p-2 border border-gray-300">Location</th>
-                                {/* <th className="p-2 border border-gray-300">More Information</th> */}
+                                <th className="p-2 border border-gray-300">More Information</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -114,11 +114,11 @@ const ProjectTable = ({
                                                     <FaSearchLocation />
                                                 </button>
                                             </td>
-                                            {/* <td className="p-2 border border-gray-300 text-center">
+                                            <td className="p-2 border border-gray-300 text-center">
                                                 <button className={buttonClass} onClick={() => handleOpenInfo(line.timestamp, true)}>
                                                     <FaInfo />
                                                 </button>
-                                            </td> */}
+                                            </td>
                                         </tr>
                                     ))
                             ) : (
@@ -171,7 +171,7 @@ const ProjectTable = ({
                                 <th className="p-2 border border-gray-300">Narrative</th>
                                 <th className="p-2 border border-gray-300">Delete</th>
                                 <th className="p-2 border border-gray-300">Location</th>
-                                {/* <th className="p-2 border border-gray-300">More Information</th> */}
+                                <th className="p-2 border border-gray-300">More Information</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -209,11 +209,11 @@ const ProjectTable = ({
                                                     <FaSearchLocation />
                                                 </button>
                                             </td>
-                                            {/* <td className="p-2 border border-gray-300 text-center">
+                                            <td className="p-2 border border-gray-300 text-center">
                                                 <button className={buttonClass} onClick={() => handleOpenInfo(point.timestamp, false)}>
                                                     <FaInfo />
                                                 </button>
-                                            </td> */}
+                                            </td>
                                         </tr>
                                     ))
                             ) : (

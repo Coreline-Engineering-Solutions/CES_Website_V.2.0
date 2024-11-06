@@ -21,8 +21,8 @@ const Hero = () => {
     }, []);
 
     return (
-        <div className="relative overflow-hidden ">
-            <div className="inset-0 justify-end items-end">
+        <div className="relative overflow-hidden pt-20 ">
+            <div className="justify-end items-end">
                 {images.map((image, index) => (
                     <img
                         key={index}
@@ -37,31 +37,28 @@ const Hero = () => {
                     />
                 ))}
             </div>
-            <motion.div variants={fadeIn("left", "spring")}>
-                <div className="relative px-16 py-12 flex-1 sm:w-[350px] sm:min-w-[350px] flex flex-col justify-center items-center w-full max-xl:padding-x mt-32">
-                    <div className=" bg-slate-600 bg-opacity-60 backdrop-filter backdrop-blur-lg rounded-lg p-8 mx-auto max-w-lg shadow-xl">
-                        <h1 className="  font-monstercat text-8xl max-sm:text-[72px] max-sm:leading">
-                            <span className=" text-[#00309e] drop-shadow font-bold">CORELINE</span>
-                        </h1>
-                        <p className="px-2 font-poppins text-white drop-shadow font-bold text-[32px] max-sm:text-[16px] max-sm:leading">
-                            Engineering Solutions
-                        </p>
-                        <p className="p-2 font-montserrat text-white text-lg leading-7">
-                            At Coreline Engineering Solutions, we excel in delivering innovative design services that redefine the telecommunications landscape. Based in South Africa, our diverse perspective drives global connectivity, connecting communities and businesses worldwide. As industry leaders, we consistently pioneer cutting-edge solutions, fostering growth and connectivity. Join us on our mission to build a connected future without limits.
-                        </p>
-                        <a href="#contact" className="flex hover:bg-[#6d7eff] justify-center items-center gap-2 bg-[#00309e] text-white m-2 px-4 py-3 rounded-full">
-                                Contact Us
-                                <img src={arrowRight} alt="arrow right icon" className="ml-2 rounded-full w-8 h-8" />
-                            </a>
+            <motion.div variants={fadeIn("top", "spring")}>
+    <div className="relative px-4 flex-1 sm:w-[350px] sm:min-w-[350px] flex flex-col justify-center items-center w-full mt-16">
+        <div className="bg-slate-600 bg-opacity-60 backdrop-filter backdrop-blur-lg rounded-lg p-8 mx-auto max-w-lg shadow-xl text-center">
+            <h1 className="font-monstercat text-6xl max-sm:text-[48px] max-sm:leading mb-4">
+                <span className="text-[#00309e] drop-shadow font-bold">
+                    "Mapping the Future of Connectivity"
+                </span>
+            </h1>
+            <p className="px-2 font-poppins text-white drop-shadow font-bold text-[24px] max-sm:text-[16px] max-sm:leading mb-6">
+                Fiber Network Solutions
+            </p>
+            <p className="p-2 font-montserrat text-white text-lg leading-7">
+                We specialize in detailed fiber mapping solutions for clients preparing for field surveys. Our team provides comprehensive design services that streamline project planning, helping you visualize and connect communities with precision and innovation.
+            </p>
+            <a href="#contact" className="flex hover:bg-[#6d7eff] justify-center items-center gap-2 bg-[#00309e] text-white m-2 px-4 py-3 rounded-full">
+                Contact Us
+                <img src={arrowRight} alt="arrow right icon" className="ml-2 rounded-full w-8 h-8" />
+            </a>
+        </div>
+    </div>
+</motion.div>
 
-                        <div className="flex justify-center items-start flex-wrap w-full mt-16 gap-16">
-                            <ProgressCardHelp />
-                            <ProgressCardCable />
-                            <ProgressCardHouse />
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
 
         </div>
     );

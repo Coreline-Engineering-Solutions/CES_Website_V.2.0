@@ -21,8 +21,16 @@ import AI5 from './AI-5.jpg'
 import AI6 from './AI-6.jpg'
 import herobg from './herobg.png'
 import Loginbg from './LoginBackground.png'
+import HeroV2bg from './HeroV2bg.png'
+import HeroV2bg1 from './HeroV2bg1.png'
+import HeroV2bg2 from './HeroV2bg2.png'
+import Core from './core.png'
 
 export {
+    Core,
+    HeroV2bg,
+    HeroV2bg1,
+    HeroV2bg2,
     Loginbg,
     AI1,
     AI2,

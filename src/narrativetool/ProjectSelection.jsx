@@ -37,7 +37,7 @@ const ProjectSelection = ({
         setTimeout(() => {
             handleFetchData();
             handleFetchPointData();
-        }, 0); // This ensures fetch happens after project state is updated
+        }); // This ensures fetch happens after project state is updated
     };
 
     const handleDeleteProject = (projectReference) => {

@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { geolocation } from '../hooks';
 import { useNavigate } from 'react-router-dom';
+import { pindrop, pindropRed,markerBlue,markerOrange,markerRed } from '../assets/icons';
 
 
 
@@ -158,11 +159,21 @@ function NarrativeMain() {
 				// Always move the map to the user's location
 				map.flyTo([location.coordinates.lat, location.coordinates.lng], 18, { animate: true });
 	
-				// Create or update the current location marker
+				// Define your custom icon here (you can reuse getCustomIcon or create another one for the location marker)
+				const customLocationIcon = L.icon({
+					iconUrl: markerRed, // Replace with your custom icon URL
+					iconSize: [40, 40], // Adjust the size as needed
+					iconAnchor: [17.5, 35], // Anchor to the bottom center
+				});
+	
+				// Create or update the current location marker with the custom icon
 				if (!map.currentLocationMarker) {
-					map.currentLocationMarker = L.marker([location.coordinates.lat, location.coordinates.lng]).addTo(map);
+					map.currentLocationMarker = L.marker([location.coordinates.lat, location.coordinates.lng], {
+						icon: customLocationIcon // Use the custom icon here
+					}).addTo(map);
 				} else {
 					map.currentLocationMarker.setLatLng([location.coordinates.lat, location.coordinates.lng]);
+					map.currentLocationMarker.setIcon(customLocationIcon); // Ensure the icon is updated
 				}
 			} else {
 				toast.error(location.error ? location.error.message : "Location not available", {
@@ -204,101 +215,106 @@ function NarrativeMain() {
 	
 			throw new Error("Parsed text is neither a single coordinate nor an array");
 		} catch (error) {
-			console.error("Error parsing coordinates:", error.message);
+			toast.error("Error parsing coordinates:", error.message);
 			return [];
 		}
 	};
 	
 	const handleFetchData = async () => {
 		const currentProject = selectedProjectRef.current;  // Use ref to get the latest project
-
+	
 		try {
-			const response = await axios.post(
+				const response = await axios.post(
 				"https://www.corelineengineering.com/php/nar_l_checks.php",
 				{
 					USERNAME: username,
 					PROJECT: currentProject,
 				}
 			);
+	
 			if (Array.isArray(response.data)) {
 				const fetchedLines = response.data.map((line) => ({
 					...line,
 					coordinates: parseCoordinates(line.line_as_text),
 				}));
-
+	
 				setProjectLines((prevLines) => ({
 					...prevLines,
-					[selectedProject]: fetchedLines,
+					[currentProject]: fetchedLines,
 				}));
-
+	
 				const coordinates = fetchedLines.map((line) => ({
 					type: line.type || 'line',  // Default to 'line', but handle 'point' later
 					coordinates: line.coordinates || [],
 				}));
 				setCoordinates(coordinates);
+	
+				return fetchedLines;  // Return the fetched lines
 			} else {
 				toast.error("Fetched data is not in the expected format.", {
 					toastId: "fetchDataFormatError",
 					containerId: 'narrativeMain-toast-container'
 				});
+				return [];  // Return an empty array to prevent undefined
 			}
 		} catch (error) {
 			toast.error("Error caught when fetching data", {
 				toastId: "fetchDataError",
 				containerId: 'narrativeMain-toast-container'
 			});
+			return [];  // Return an empty array in case of error
 		}
 	};
 	const handleFetchPointData = async () => {
-	const currentProject = selectedProjectRef.current;
+		const currentProject = selectedProjectRef.current;
+	
+		try {
 
-	try {
-		const response = await axios.post(
-			"https://www.corelineengineering.com/php/nar_p_checks.php",
-			{
-				USERNAME: username,
-				PROJECT: currentProject,
-			}
-		);
-
-		if (Array.isArray(response.data)) {
-			// Filter points that have a non-empty, non-null timestamp
-			const parsedPoints = response.data
-				.filter((point) => point.timestamp && point.timestamp !== "" && point.timestamp !== null)
-				.map((point) => ({
-					...point,
-					coordinates: parseCoordinates(point.point_as_text), // Parse point_as_text
+			const response = await axios.post(
+				"https://www.corelineengineering.com/php/nar_p_checks.php",
+				{
+					USERNAME: username,
+					PROJECT: currentProject,
+				}
+			);
+			if (Array.isArray(response.data)) {
+				const parsedPoints = response.data
+					.filter((point) => point.timestamp && point.timestamp !== "" && point.timestamp !== null)
+					.map((point) => ({
+						...point,
+						coordinates: parseCoordinates(point.point_as_text),
+					}));
+	
+				setNarrativePoints((prevPoints) => ({
+					...prevPoints,
+					[currentProject]: parsedPoints, // Update state by project
 				}));
-
-			setNarrativePoints((prevPoints) => ({
-				...prevPoints,
-				[currentProject]: parsedPoints, // Update state by project
-			}));
-			
-
-			const coordinates = parsedPoints.map((point) => ({
-				type:'point',
-
-				coordinates: point.coordinates || [],
-			}));
-			
-			setPointCoordinates(coordinates);
-		} else {
-			toast.error("Fetched data is not in the expected format.", {
-				toastId: "fetchDataFormatError",
+	
+				const coordinates = parsedPoints.map((point) => ({
+					type: 'point',
+					coordinates: point.coordinates || [],
+				}));
+	
+				setPointCoordinates(coordinates);
+	
+				return parsedPoints;  // Return the parsed points
+			} else {
+				toast.error("Fetched data is not in the expected format.", {
+					toastId: "fetchDataFormatError",
+					containerId: "narrativeMain-toast-container",
+				});
+				return [];  // Return an empty array to prevent undefined
+			}
+		} catch (error) {
+			toast.error("Error caught when fetching point data", {
+				toastId: "fetchDataError",
 				containerId: "narrativeMain-toast-container",
 			});
+			return [];  // Return an empty array in case of error
 		}
-	} catch (error) {
-		toast.error("Error caught when fetching point data", {
-			toastId: "fetchDataError",
-			containerId: "narrativeMain-toast-container",
-		});
-	}
-};
-
+	};
 	
-	  
+
 	const handleFetchPointAddress = async (newPoint) => {
 		const { coordinates } = newPoint;
 
@@ -356,6 +372,7 @@ function NarrativeMain() {
 					NARRATIVE_RADIUS: latestPointData.radius,
 					NARRATIVE_SUFFIX: latestPointData.pointNote,
 					POINT_TYPE: latestPointData.pointType,
+					BEARING: latestPointData.locationDirection
 					
 
 
@@ -504,6 +521,7 @@ function NarrativeMain() {
 					handleFetchPointAddress=   {handleFetchPointAddress}
 					pindrops=				{showPins}
 					handleFetchPointData = {handleFetchPointData}
+					handleFetchData=		{handleFetchData}
 
 				/>
 			</div>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import { radioMapPoints, radioMapLines } from "../constants";
 import { ToggleSwitch } from "../components";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProjectDetails = ({
     projectDetails,
@@ -113,11 +115,25 @@ const ProjectDetails = ({
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
         onSelectedOptionChange(selectedValue); // Send selected option to the parent
+    
+        if (selectedValue === "points") {
+            toast.info("Click on a marker after it's placed to add the address.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                containerId: "projectDetailsContainer"
+            });
+        }
     };
 
 
     return (
         <div className="w-full">
+           <ToastContainer containerId="projectDetailsContainer" />
             <h2 className="bg-gray-100 p-4 text-xl font-bold mb-4">Project Details</h2>
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                 <p className="text-2xl font-bold text-[#00309e]  tracking-wide uppercase mb-2">

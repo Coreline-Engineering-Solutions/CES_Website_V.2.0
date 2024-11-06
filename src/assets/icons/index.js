@@ -19,7 +19,7 @@ import done from './done.svg';
 import execute from './execute.svg';
 import monitor from './monitor.svg';
 import marker_map from './MapMarker.svg';
-import  Signout from './signout.svg';
+import Signout from './signout.svg';
 import Minimize from './minimize.svg';
 import ToolIcon from './tools_icon.svg';
 import ToolIcon2 from './tools_icon2.svg';
@@ -32,9 +32,23 @@ import crossB from './crossblack.svg';
 import pindrop from './mappindrop.svg';
 import information from './information.svg'
 import pindropRed from './pindropred.svg';
+import markerBlue from './markerblue.svg';
+import markerOrange from './markerorange.svg';
+import markerRed from './markerred.svg';
+import linkedin from './linkedin.svg'
 
+import excellence from './excellence.svg'
+import innovation from './innovative.svg'
+import responsiveness from './responsiveness.svg'
+import accountable from './accountable.svg'
+import narrative from './narrative.png'
 
 export {
+    narrative,
+    excellence,
+    innovation,
+    responsiveness,
+    accountable,
     marker_map,
     design,
     hamburger,
@@ -68,5 +82,9 @@ export {
     Check,
     pindrop,
     information,
-    pindropRed
+    pindropRed,
+    markerBlue,
+    markerOrange,
+    markerRed,
+    linkedin,
 }

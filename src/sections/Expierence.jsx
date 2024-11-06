@@ -14,14 +14,12 @@ import { herobg } from "../assets/images";
 const ExperienceCard = ({ experience }) => {
 	return (
 		<VerticalTimelineElement
-			
 			contentStyle={{
 				background: "#00309e",
 				color: "#fff",
 			}}
-			contentArrowStyle={{ borderRight: "7px solid  #bg-black " }}
+			contentArrowStyle={{ borderRight: "7px solid bg-black" }}
 			icon={
-				
 				<div className='flex justify-center items-center w-full h-full '>
 					<img
 						src={experience.icon}
@@ -31,9 +29,9 @@ const ExperienceCard = ({ experience }) => {
 			}
 		>
 			<div>
-				<h3 className='text-white text-[24px] font-bold'>{experience.title}</h3>
+				<h3 className='text-white text-[24px] font-bold lg:text-[28px] xl:text-[32px] 2xl:text-[36px]'>{experience.title}</h3>
 				<p
-					className='text-secondary text-[16px] font-semibold'
+					className='text-secondary text-[16px] font-semibold lg:text-[18px] xl:text-[20px] 2xl:text-[22px]'
 					style={{ margin: 0 }}
 				>
 				</p>
@@ -43,7 +41,7 @@ const ExperienceCard = ({ experience }) => {
 				{experience.points.map((point, index) => (
 					<li
 						key={`experience-point-${index}`}
-						className='text-black-100 text-[14px] pl-1 tracking-wider'
+						className='text-black-100 text-[14px] pl-1 tracking-wider lg:text-[16px] xl:text-[18px] 2xl:text-[20px]'
 					>
 						{point}
 					</li>
@@ -57,12 +55,11 @@ const Experience = () => {
 	return (
 		<>
 			<motion.div variants={textVariant()}>
-
-			<h3 id="client" className="font-palanquin mx-auto text-center text-4xl font-bold max-w-3xl">
-				Client
-				<span className="text-[#00309e] font-bold"> Overview </span>
-			</h3>
-				<p className={`text-center mt-4 m-auto info-text max-w-4xl`}>
+				<h3 id="client" className="font-palanquin mx-auto text-center text-4xl font-bold max-w-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+					Client
+					<span className="text-[#00309e] font-bold"> Overview </span>
+				</h3>
+				<p className={`text-center mt-4 m-auto info-text max-w-4xl text-lg lg:text-xl xl:text-2xl 2xl:text-2xl`}>
 					Coreline Engineering Solutions, we're dedicated to revolutionizing the telecommunications landscape with our innovative services. From designing robust infrastructure to optimizing network performance, we offer a comprehensive suite of solutions tailored to meet the evolving needs of our clients. Our expertise encompasses:
 				</p>
 			</motion.div>

@@ -11,6 +11,7 @@ import ProjectTabs from "./ProjectTabs";
 import Modal from "./ProjectModal";
 import NarrativeMain from "./NarrativeMain";
 import NarrativeTable from "./NarrativeTable";
+import ModalMoreInfo from "./ModalMoreInfo";
 
 export {
   MapToolbar,
@@ -26,4 +27,5 @@ export {
     Modal,
     NarrativeMain,
     NarrativeTable,
+    ModalMoreInfo,
 };

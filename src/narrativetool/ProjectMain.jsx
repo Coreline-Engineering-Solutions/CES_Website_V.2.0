@@ -12,6 +12,7 @@ import { ces, Loginbg } from "../assets/images";
 import * as XLSX from "xlsx";
 import NarrativeTable from "./NarrativeTable";
 import Swal from "sweetalert2";
+import ModalMoreInfo from "./ModalMoreInfo";
 
 const ProjectMain = ({
 	setSelectedProject,
@@ -48,7 +49,9 @@ const ProjectMain = ({
 	const username 										= location.state?.username || "";
 	const [activeTab, setActiveTab] 					= useState("selection");
 	const [showModal, setShowModal] 					= useState(false);
+	const [showModalInfo, setShowModalInfo] 					= useState(false);
 	const [modalContent, setModalContent] 				= useState("");
+	const [modalContentInfo, setModalContentInfo] 				= useState("");
 	const [currentPage, setCurrentPage] 				= useState(1);
 	const rowsPerPage = 5;
 	const [width, setWidth] 							= useState(380); // Initial width of the section
@@ -154,9 +157,15 @@ const ProjectMain = ({
 	};
 
 	const handleOpenInfo = (narrative) => {
-		setModalContent(narrative);
-		setShowModal(true);
+		setModalContentInfo(narrative);
+		setShowModalInfo(true);
 	}
+
+	const handleCloseModalInfo = () => {
+
+		setShowModalInfo(false);
+		setModalContentInfo("");
+	};
 
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -433,11 +442,14 @@ const ProjectMain = ({
 				className="flex flex-col justify-start items-start h-full pt-24 p-5 border overflow-y-auto border-gray-300 shadow-md resize-x"
 				style={{ width: `${width}px` }} // Apply the dynamic width here
 			>
+				{/* Container for ProjectTabs with sticky positioning */}
+			<div className="sticky top-0 z-10 bg-white">
 				<ProjectTabs
 					activeTab={activeTab}
 					setActiveTab={setActiveTab}
 					selectedProject={selectedProject}
 				/>
+			</div>
 				{activeTab === "selection" && (
 					<ProjectSelection
 						selection=				{selection}
@@ -479,6 +491,8 @@ const ProjectMain = ({
 						workPrints=				{workPrints}
 						setPointData = 			{setPointData}
 						pointData=				{pointData}
+						handleFetchData=		{handleFetchData}
+						handleFetchPointData = 	{handleFetchPointData}
 
 					/>
 				)}
@@ -506,6 +520,13 @@ const ProjectMain = ({
 				showModal={showModal}
 				handleCloseModal={handleCloseModal}
 				modalContent={modalContent}
+			/>
+			<ModalMoreInfo
+				showModal={showModalInfo}
+				handleCloseModal={handleCloseModalInfo}
+				modalContentInfo={modalContentInfo}
+				handleFetchData=		{handleFetchData}
+				handleFetchPointData = 	{handleFetchPointData}
 			/>
 			<ToastContainer containerId="projectToastContainer" />
 

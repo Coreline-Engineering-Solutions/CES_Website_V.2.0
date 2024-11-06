@@ -14,6 +14,7 @@ import Verification from "./Verification";
 import VerifyEmail from "./VerifyEmail";
 import PassReset from "./PassReset";
 import PassVerify from "./PassVerify"
+import HeroNew from "./HeroNew";
 
 export {
   DashBoard,
@@ -32,4 +33,5 @@ export {
   VerifyEmail,
   PassReset,
   PassVerify,
+  HeroNew,
 };

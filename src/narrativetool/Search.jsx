@@ -4,6 +4,7 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-geosearch/assets/css/leaflet.css';
 import L from 'leaflet';
+import { pindrop, pindropRed,markerBlue,markerOrange,markerRed } from '../assets/icons';
 
 const Search = ({ enablePinDrops }) => {
     const map = useMap();
@@ -26,19 +27,28 @@ const Search = ({ enablePinDrops }) => {
 
         map.addControl(searchControl);
 
-        // Define the event handler function
+        // Define custom icon for search result marker
+        const customIcon = L.icon({
+            iconUrl: markerOrange,  // Replace with your custom icon path (e.g., pindrop)
+            iconSize: [35, 35], // Adjust the size of the custom icon
+            iconAnchor: [17.5, 35], // Anchor to the bottom center of the icon
+        });
+
+        // Define the event handler function for location results
         function handleLocationShow(result) {
             const { location } = result;
             if (marker) {
-                map.removeLayer(marker); // Remove previous marker
+                map.removeLayer(marker); // Remove previous marker if it exists
             }
-            const newMarker = L.marker([location.y, location.x]).addTo(map);
+
+            // Create a new marker with the custom icon and add it to the map
+            const newMarker = L.marker([location.y, location.x], { icon: customIcon }).addTo(map);
             setMarker(newMarker); // Set new marker
         }
 
         // Handle the visibility of the marker
         if (marker) {
-            marker.setOpacity(enablePinDrops ? 1 : 0); // Set marker visibility based on toggle state
+            marker.setOpacity(enablePinDrops ? 1 : 0); // Toggle marker visibility based on state
         }
 
         // Add event listener for showing location
